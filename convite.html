@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Anos | Cecília</title>
+
+        <!-- =========================
+         GOOGLE FONTS
+    ========================== -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="convite.css"
+    >
+
+</head>
+<body>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<header class="hero">
+
+    <video
+        class="hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+    >
+        <source src="video/balle.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo.
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <p class="hero-small">
+            UMA NOITE ESPECIAL
+        </p>
+
+        <h1>Cecília</h1>
+
+        <span>15 anos</span>
+
+        <p class="hero-date">
+            20 DE DEZEMBRO DE 2026
+        </p>
+
+        <div class="scroll-indicator">
+
+            <span>
+                ROLE PARA DESCOBRIR
+            </span>
+
+            <div class="arrow">
+                ↓
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+<main>
+
+    <!-- =====================================================
+         CONVITE
+    ====================================================== -->
+
+    <section class="invitation">
+
+
+        <div class="section-title">
+
+            <span>
+                O CONVITE
+            </span>
+
+            <h2>
+                Você está convidado
+            </h2>
+
+            <div class="ornament">
+                ✧
+            </div>
+
+        </div>
+
+
+
+        <div class="invitation-card">
+
+
+            <p class="card-small">
+                COM MUITO CARINHO
+            </p>
+
+
+            <h2>
+                Cecília
+            </h2>
+
+
+            <p class="card-text">
+
+                Quero compartilhar com você uma das noites
+                mais especiais da minha vida.
+
+            </p>
+
+
+
+            <!-- =========================
+                 INFORMAÇÕES DO EVENTO
+            ========================== -->
+
+            <div class="details">
+
+
+                <div>
+
+                    <span>
+                        DATA
+                    </span>
+
+                    <strong>
+                        20.12.2026
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        HORÁRIO
+                    </span>
+
+                    <strong>
+                        20:00
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        LOCAL
+                    </span>
+
+                    <strong>
+                        Espaço Elegance
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 MAPA
+            ================================================== -->
+
+            <div class="map-section">
+
+
+                <div class="map-header">
+
+                    <span>
+                        LOCALIZAÇÃO
+                    </span>
+
+                    <h3>
+                        Espaço Elegance
+                    </h3>
+
+                    <p>
+                        Encontre facilmente o local da nossa
+                        celebração.
+                    </p>
+
+                </div>
+
+
+
+                <div class="map-container">
+
+                    <!--
+                    IMPORTANTE:
+
+                    Substitua o src abaixo pelo link
+                    "Incorporar um mapa" do Google Maps.
+                    -->
+
+                    <iframe
+                        src="https://www.google.com/maps?q=Espa%C3%A7o%20Elegance&output=embed"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Mapa do Espaço Elegance"
+                    >
+                    </iframe>
+
+                </div>
+
+
+
+                <a
+                    href="https://www.google.com/maps/search/?api=1&query=Espa%C3%A7o+Elegance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="map-button"
+                >
+
+                    📍 ABRIR NO GOOGLE MAPS
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- ENDEREÇO -->
+
+            <p class="address">
+
+                Av. Principal, 1000 — Centro
+
+            </p>
+
+
+
+            <!-- BOTÕES -->
+
+            <div class="card-buttons">
+
+
+                <a href="#confirmacao">
+
+                    Confirmar presença
+
+                </a>
+
+
+                <a
+                    href="https://www.google.com/maps/search/?api=1&query=Espa%C3%A7o+Elegance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="outline"
+                >
+
+                    Ver localização
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CONTAGEM REGRESSIVA
+    ====================================================== -->
+
+    <section class="countdown">
+
+
+        <p>
+            O GRANDE DIA ESTÁ CHEGANDO
+        </p>
+
+
+        <h2>
+            Faltam...
+        </h2>
+
+
+
+        <div class="timer">
+
+
+            <div>
+
+                <strong id="days">
+                    00
+                </strong>
+
+                <span>
+                    DIAS
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong id="hours">
+                    00
+                </strong>
+
+                <span>
+                    HORAS
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong id="minutes">
+                    00
+                </strong>
+
+                <span>
+                    MINUTOS
+                </span>
+
+            </div>
+
+
+
+            <div>
+
+                <strong id="seconds">
+                    00
+                </strong>
+
+                <span>
+                    SEGUNDOS
+                </span>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         HISTÓRIA
+    ====================================================== -->
+
+    <section class="story">
+
+
+        <div class="section-title">
+
+            <span>
+                MINHA HISTÓRIA
+            </span>
+
+            <h2>
+                Cada passo me trouxe até aqui
+            </h2>
+
+        </div>
+
+
+
+        <div class="timeline">
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-number">
+                    01
+                </div>
+
+                <div class="timeline-text">
+
+                    <h3>
+                        Meu primeiro passo
+                    </h3>
+
+                    <p>
+
+                        Tudo começou com um pequeno passo,
+                        que logo se transformou em uma grande paixão.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-number">
+                    02
+                </div>
+
+                <div class="timeline-text">
+
+                    <h3>
+                        Meu primeiro palco
+                    </h3>
+
+                    <p>
+
+                        As primeiras apresentações, os nervos,
+                        os aplausos e a emoção de dançar.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-number">
+                    03
+                </div>
+
+                <div class="timeline-text">
+
+                    <h3>
+                        Um sonho realizado
+                    </h3>
+
+                    <p>
+
+                        O balé me ensinou que cada movimento
+                        faz parte de uma história.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-number">
+                    04
+                </div>
+
+                <div class="timeline-text">
+
+                    <h3>
+                        Meus 15 anos
+                    </h3>
+
+                    <p>
+
+                        E agora começa um novo capítulo.
+                        Um novo palco, novos sonhos e uma noite inesquecível.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         GALERIA
+    ====================================================== -->
+
+    <section class="gallery">
+
+
+        <div class="section-title">
+
+            <span>
+                MOMENTOS
+            </span>
+
+            <h2>
+                Memórias que ficam
+            </h2>
+
+        </div>
+
+
+
+        <div class="gallery-grid">
+
+
+            <img
+                src="Imagens/ballet 1.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy"
+            >
+
+
+            <img
+                src="Imagens/ballet 2.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy"
+            >
+
+
+            <img
+                src="Imagens/ballet 3.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy"
+            >
+
+
+            <img
+                src="Imagens/ballet 4.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy"
+            >
+            <img
+                src="Imagens/ballet 1.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy">
+            <img 
+                src="Imagens/ballet 2.jpg"
+                alt="Foto da aniversariante"
+                loading="lazy">
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         INFORMAÇÕES
+    ====================================================== -->
+
+    <section class="information">
+
+
+        <div class="section-title">
+
+            <span>
+                A NOITE
+            </span>
+
+            <h2>
+                Informações importantes
+            </h2>
+
+        </div>
+
+
+
+        <div class="info-grid">
+
+
+            <div class="info-card">
+
+                <div class="icon">
+                    ♧
+                </div>
+
+                <h3>
+                    Data
+                </h3>
+
+                <p>
+
+                    20 de dezembro<br>
+                    Domingo
+
+                </p>
+
+            </div>
+
+
+
+            <div class="info-card">
+
+                <div class="icon">
+                    ◷
+                </div>
+
+                <h3>
+                    Horário
+                </h3>
+
+                <p>
+
+                    Recepção às<br>
+                    20:00
+
+                </p>
+
+            </div>
+
+
+
+            <div class="info-card">
+
+                <div class="icon">
+                    ♧
+                </div>
+
+                <h3>
+                    Local
+                </h3>
+
+                <p>
+
+                    Espaço Elegance<br>
+                    Centro
+
+                </p>
+
+            </div>
+
+
+
+            <div class="info-card">
+
+                <div class="icon">
+                    ♢
+                </div>
+
+                <h3>
+                    Traje
+                </h3>
+
+                <p>
+
+                    Social<br>
+                    Elegante
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CONFIRMAÇÃO
+    ====================================================== -->
+
+    <section
+        id="confirmacao"
+        class="confirmation"
+    >
+
+
+        <div class="section-title">
+
+
+            <span>
+                RSVP
+            </span>
+
+
+            <h2>
+                Confirme sua presença
+            </h2>
+
+
+            <p>
+
+                Sua presença tornará essa noite ainda mais especial.
+
+            </p>
+
+
+        </div>
+
+
+
+        <form class="rsvp-form" id="rsvpForm">
+
+<label for="rsvpNome">
+    Nome completo
+</label>
+
+<input
+    type="text"
+    id="rsvpNome"
+    name="nome"
+    placeholder="Seu nome completo"
+    required
+>
+
+
+<label for="rsvpTelefone">
+    Telefone
+</label>
+
+<input
+    type="tel"
+    id="rsvpTelefone"
+    name="telefone"
+    placeholder="Seu telefone"
+>
+
+
+<label for="rsvpVai">
+    Você irá comparecer?
+</label>
+
+<select
+    id="rsvpVai"
+    name="vai"
+    required
+>
+
+    <option value="">
+        Você irá comparecer?
+    </option>
+
+    <option value="sim">
+        Sim, estarei presente
+    </option>
+
+    <option value="nao">
+        Infelizmente não poderei
+    </option>
+
+</select>
+
+
+<label for="rsvpAcomp">
+    Número de acompanhantes
+</label>
+
+<select
+    id="rsvpAcomp"
+    name="num_acompanhantes"
+>
+
+    <option value="0">
+        Nenhum acompanhante
+    </option>
+
+    <option value="1">
+        1 acompanhante
+    </option>
+
+    <option value="2">
+        2 acompanhantes
+    </option>
+
+    <option value="3">
+        3 acompanhantes
+    </option>
+
+    <option value="4">
+        4 acompanhantes
+    </option>
+
+    <option value="5">
+        5 acompanhantes
+    </option>
+
+</select>
+
+
+<div
+    class="acompanhantes-container"
+    id="acompanhantesContainer"
+></div>
+
+
+<div
+    class="rsvp-message"
+    id="rsvpMessage"
+    hidden
+></div>
+
+
+<button type="submit">
+    Confirmar presença
+</button>
+
+</form>
+
+
+    </section>
+
+</main>
+
+    <!-- =====================================================
+         FINAL
+    ====================================================== -->
+
+    <footer class="final">
+
+
+        <div class="final-overlay"></div>
+
+
+        <div class="final-content">
+
+
+            <p>
+                UM NOVO CAPÍTULO COMEÇA
+            </p>
+
+
+            <h2>
+
+                Cada passo<br>
+                me trouxe até aqui.
+
+            </h2>
+
+
+            <div class="final-line"></div>
+
+
+            <span>
+                Cecília
+            </span>
+
+
+            <strong>
+                15 ANOS
+            </strong>
+
+
+            <p class="thanks">
+
+                Espero você para celebrar comigo.
+
+            </p>
+
+
+        </div>
+
+
+    </footer>
+
+    <script src="convite.js"></script>
+
+</body>
+</html>

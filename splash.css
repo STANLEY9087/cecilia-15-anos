@@ -1,0 +1,979 @@
+/* =========================================================
+   CECÍLIA — 15 ANOS
+   SPLASH SCREEN
+   TEMA: BALÉ + NOITE ESTRELADA
+========================================================= */
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+
+body {
+    width: 100%;
+    min-height: 100%;
+
+    font-family: "Montserrat", sans-serif;
+
+    background: #020817;
+
+    color: #f8f4e8;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BLOQUEIO DA PÁGINA
+========================================================= */
+
+body.locked {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   SPLASH
+========================================================= */
+
+.splash {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+
+    z-index: 10000;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    padding: 30px 20px;
+
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(40, 88, 160, 0.30),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(255, 213, 105, 0.08),
+            transparent 20%
+        ),
+
+        linear-gradient(
+            135deg,
+            #010713 0%,
+            #031331 45%,
+            #071c40 70%,
+            #010611 100%
+        );
+
+    transition:
+        opacity 1s ease,
+        visibility 1s ease,
+        transform 1s ease;
+}
+
+
+/* =========================================================
+   TEXTURA SUAVE
+========================================================= */
+
+.splash::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            rgba(255, 220, 120, 0.95) 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.8) 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 216, 108, 0.7) 2px,
+            transparent 3px
+        );
+
+    background-size:
+        120px 130px,
+        190px 170px,
+        260px 230px;
+
+    animation:
+        starsMove 30s linear infinite;
+}
+
+
+/* =========================================================
+   SEGUNDA CAMADA DE ESTRELAS
+========================================================= */
+
+.splash::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: -20%;
+
+    z-index: 0;
+
+    pointer-events: none;
+
+    opacity: 0.5;
+
+    background-image:
+
+        radial-gradient(
+            circle,
+            rgba(255, 220, 120, 0.7) 1px,
+            transparent 2px
+        ),
+
+        radial-gradient(
+            circle,
+            rgba(255, 255, 255, 0.55) 1px,
+            transparent 2px
+        );
+
+    background-size:
+        170px 180px,
+        250px 220px;
+
+    transform:
+        rotate(8deg)
+        scale(1.2);
+
+    animation:
+        starsMoveReverse 45s linear infinite;
+}
+
+
+/* =========================================================
+   MOVIMENTO DAS ESTRELAS
+========================================================= */
+
+@keyframes starsMove {
+
+    from {
+        transform:
+            translate3d(0, 0, 0);
+    }
+
+    to {
+        transform:
+            translate3d(-80px, 60px, 0);
+    }
+}
+
+
+@keyframes starsMoveReverse {
+
+    from {
+        transform:
+            rotate(8deg)
+            scale(1.2)
+            translate3d(0, 0, 0);
+    }
+
+    to {
+        transform:
+            rotate(8deg)
+            scale(1.2)
+            translate3d(80px, -50px, 0);
+    }
+}
+
+
+/* =========================================================
+   BRILHO CENTRAL
+========================================================= */
+
+.splash-glow {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 1;
+
+    pointer-events: none;
+
+    opacity: 1;
+
+    background:
+
+        radial-gradient(
+            circle at 50% 42%,
+            rgba(125, 186, 255, 0.16),
+            transparent 48%
+        ),
+
+        radial-gradient(
+            circle at 50% 62%,
+            rgba(255, 208, 122, 0.10),
+            transparent 55%
+        );
+
+    animation:
+        splashGlow 6s ease-in-out infinite;
+}
+
+
+@keyframes splashGlow {
+
+    0%,
+    100% {
+        opacity: 0.7;
+
+        transform:
+            scale(1);
+    }
+
+    50% {
+        opacity: 1;
+
+        transform:
+            scale(1.04);
+    }
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.splash-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: min(90%, 700px);
+
+    margin: auto;
+
+    padding: 40px 30px;
+
+    text-align: center;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+/* =========================================================
+   SÍMBOLO DE BALÉ
+========================================================= */
+
+.ballet-symbol {
+
+    width: 70px;
+
+    height: 70px;
+
+    margin:
+        0 auto 25px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border:
+        1px solid
+        rgba(246, 207, 112, 0.4);
+
+    border-radius: 50%;
+
+    color: #f6cf70;
+
+    font-family:
+        "Cormorant Garamond",
+        serif;
+
+    font-size: 34px;
+
+    box-shadow:
+
+        0 0 20px
+        rgba(246, 207, 112, 0.25),
+
+        inset 0 0 20px
+        rgba(246, 207, 112, 0.05);
+
+    animation:
+        starPulse 4s ease-in-out infinite;
+}
+
+
+@keyframes starPulse {
+
+    0%,
+    100% {
+
+        transform:
+            scale(1);
+
+        box-shadow:
+
+            0 0 20px
+            rgba(246, 207, 112, 0.25),
+
+            inset 0 0 20px
+            rgba(246, 207, 112, 0.05);
+    }
+
+    50% {
+
+        transform:
+            scale(1.08);
+
+        box-shadow:
+
+            0 0 45px
+            rgba(246, 207, 112, 0.45),
+
+            inset 0 0 25px
+            rgba(246, 207, 112, 0.08);
+    }
+}
+
+
+/* =========================================================
+   PEQUENO TÍTULO
+========================================================= */
+
+.small-title {
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    letter-spacing: 6px;
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    margin-bottom: 12px;
+
+}
+
+
+
+/* =========================================================
+   NÚMERO 15
+========================================================= */
+
+.numero-15 {
+
+    font-family:
+        "Allura",
+        cursive;
+
+    font-size:
+        clamp(
+            110px,
+            18vw,
+            190px
+        );
+
+    font-weight: 400;
+
+    font-style: normal;
+
+    line-height: 0.8;
+
+    color: #f7e4ad;
+
+    text-shadow:
+
+        0 0 20px
+        rgba(247, 228, 173, 0.18),
+
+        0 0 50px
+        rgba(216, 184, 95, 0.15);
+
+}
+
+
+/* =========================================================
+   LINHA DECORATIVA
+========================================================= */
+
+.line {
+
+    width: 80px;
+
+    height: 1px;
+
+    margin:
+        28px auto 20px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            #e5bd63,
+            transparent
+        );
+
+}
+
+
+/* =========================================================
+   NOME CECÍLIA
+========================================================= */
+
+.name {
+
+    font-family:
+        "Allura",
+        cursive;
+
+    font-size:
+        clamp(
+            50px,
+            8vw,
+            80px
+        );
+
+    font-style: normal;
+
+    font-weight: 400;
+
+    line-height: 1;
+
+    color: #e9c66f;
+
+    text-shadow:
+
+        0 0 25px
+        rgba(233, 198, 111, 0.25);
+
+}
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+.splash-date {
+
+    margin-top: 15px;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 400;
+
+    letter-spacing: 5px;
+
+    color:
+        rgba(255, 255, 255, 0.6);
+
+}
+
+
+/* =========================================================
+   BOTÃO
+========================================================= */
+
+#enterButton {
+
+    margin-top: 45px;
+
+    padding:
+        16px 34px;
+
+    min-width: 190px;
+
+    background:
+        rgba(255, 255, 255, 0.03);
+
+    border:
+        1px solid
+        rgba(229, 189, 99, 0.55);
+
+    color: #f3d27b;
+
+    font-family:
+        "Montserrat",
+        sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    transition:
+
+        background 0.4s ease,
+
+        color 0.4s ease,
+
+        box-shadow 0.4s ease,
+
+        transform 0.4s ease,
+
+        border-color 0.4s ease;
+
+}
+
+
+#enterButton:hover {
+
+    background: #e9c66f;
+
+    border-color: #e9c66f;
+
+    color: #061027;
+
+    box-shadow:
+        0 0 30px
+        rgba(233, 198, 111, 0.35);
+
+    transform:
+        translateY(-3px);
+}
+
+
+#enterButton:active {
+
+    transform:
+        translateY(-1px);
+}
+
+
+#enterButton:focus-visible {
+
+    outline:
+        2px solid
+        #f3d27b;
+
+    outline-offset:
+        5px;
+}
+
+
+
+
+
+/* =========================================================
+   SAÍDA DO SPLASH
+========================================================= */
+
+.splash.leaving {
+
+    opacity: 0;
+
+    transform:
+        scale(1.06);
+
+    pointer-events: none;
+
+    transition:
+
+        opacity 1.7s
+        cubic-bezier(0.4, 0, 0.2, 1),
+
+        transform 1.9s
+        cubic-bezier(0.4, 0, 0.2, 1),
+
+        visibility 0s 1.7s;
+}
+
+
+.splash.leaving .splash-glow {
+
+    animation:
+        glowPulse 1.7s ease forwards;
+}
+
+
+@keyframes glowPulse {
+
+    0% {
+        opacity: 0;
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+.splash.leaving::before,
+.splash.leaving::after {
+
+    animation:
+        starDrift 1.7s ease-in forwards;
+}
+
+
+@keyframes starDrift {
+
+    0% {
+
+        opacity: 1;
+
+        transform:
+            translate3d(0, 0, 0)
+            rotate(0deg);
+    }
+
+    100% {
+
+        opacity: 0;
+
+        transform:
+            translate3d(0, -70px, 0)
+            rotate(30deg);
+    }
+}
+
+
+/* =========================================================
+   SPLASH ESCONDIDO
+========================================================= */
+
+.splash.hidden {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — 600PX
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .splash {
+
+        padding:
+            20px;
+    }
+
+
+    .splash-content {
+
+        width: 100%;
+
+        padding:
+            30px 15px;
+    }
+
+
+    .ballet-symbol {
+
+        width: 60px;
+
+        height: 60px;
+
+        margin-bottom: 20px;
+
+        font-size: 29px;
+    }
+
+
+    .small-title {
+
+        font-size: 9px;
+
+        letter-spacing: 4px;
+
+        margin-bottom: 10px;
+    }
+
+
+    .numero-15 {
+
+        font-size:
+            clamp(
+                100px,
+                28vw,
+                145px
+            );
+    }
+
+
+    .line {
+
+        margin:
+            24px auto 17px;
+    }
+
+
+    .name {
+
+        font-size:
+            clamp(
+                50px,
+                14vw,
+                65px
+            );
+    }
+
+
+    .splash-date {
+
+        font-size: 9px;
+
+        letter-spacing: 4px;
+    }
+
+
+    #enterButton {
+
+        margin-top: 35px;
+
+        min-width: 180px;
+
+        padding:
+            15px 25px;
+
+        font-size: 10px;
+
+        letter-spacing: 2.5px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — 380PX
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .ballet-symbol {
+
+        width: 55px;
+
+        height: 55px;
+
+        margin-bottom: 15px;
+
+        font-size: 25px;
+    }
+
+
+    .small-title {
+
+        font-size: 8px;
+
+        letter-spacing: 3px;
+    }
+
+
+    .numero-15 {
+
+        font-size: 100px;
+    }
+
+
+    .name {
+
+        font-size: 48px;
+    }
+
+
+    .splash-date {
+
+        font-size: 8px;
+
+        letter-spacing: 3px;
+    }
+
+
+    #enterButton {
+
+        margin-top: 30px;
+
+        min-width: 165px;
+
+        padding:
+            14px 20px;
+    }
+}
+
+
+/* =========================================================
+   ALTURA PEQUENA
+========================================================= */
+
+@media (max-height: 700px) {
+
+    .splash-content {
+
+        padding:
+            15px 20px;
+    }
+
+
+    .ballet-symbol {
+
+        width: 55px;
+
+        height: 55px;
+
+        margin-bottom: 12px;
+    }
+
+
+    .numero-15 {
+
+        font-size: 100px;
+    }
+
+
+    .line {
+
+        margin:
+            20px auto 15px;
+    }
+
+
+    .name {
+
+        font-size: 50px;
+    }
+
+
+    .splash-date {
+
+        margin-top: 10px;
+    }
+
+
+    #enterButton {
+
+        margin-top: 25px;
+    }
+}
+
+
+/* =========================================================
+   ACESSIBILIDADE
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
+
+
+    .splash.leaving {
+
+        transform:
+            none;
+    }
+
+
+    .splash-glow {
+
+        animation:
+            none;
+    }
+}
+
+/* =========================================================
+   CELULAR EM MODO PAISAGEM
+========================================================= */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    .splash {
+        min-height: 100dvh;
+        height: 100dvh;
+    }
+
+    .splash-content {
+        transform: scale(0.75);
+    }
+}
