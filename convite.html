@@ -44,6 +44,7 @@
         muted
         loop
         playsinline
+        preload="metadata"
         aria-hidden="true"
     >
         <source src="video/balle.mp4" type="video/mp4">
@@ -63,7 +64,7 @@
         <span>15 anos</span>
 
         <p class="hero-date">
-            20 DE DEZEMBRO DE 2026
+            20 DE MARÇO DE 2027
         </p>
 
         <div class="scroll-indicator">
@@ -145,7 +146,7 @@
                     </span>
 
                     <strong>
-                        20.12.2026
+                        20.03.2027
                     </strong>
 
                 </div>
@@ -158,7 +159,7 @@
                     </span>
 
                     <strong>
-                        20:00
+                        22:00
                     </strong>
 
                 </div>
@@ -171,7 +172,7 @@
                     </span>
 
                     <strong>
-                        Espaço Elegance
+                        Villa Jardim
                     </strong>
 
                 </div>
@@ -195,7 +196,7 @@
                     </span>
 
                     <h3>
-                        Espaço Elegance
+                        Villa Jardim
                     </h3>
 
                     <p>
@@ -217,11 +218,11 @@
                     -->
 
                     <iframe
-                        src="https://www.google.com/maps?q=Espa%C3%A7o%20Elegance&output=embed"
+                        src="https://www.google.com/maps?q=Villa+Jardim%2C+Rua+Angico%2C+830%2C+Jardin%C3%B3polis%2C+Divin%C3%B3polis+-+MG%2C+35501-571&output=embed"
                         loading="lazy"
                         allowfullscreen
                         referrerpolicy="no-referrer-when-downgrade"
-                        title="Mapa do Espaço Elegance"
+                        title="Mapa da Villa Jardim"
                     >
                     </iframe>
 
@@ -230,7 +231,7 @@
 
 
                 <a
-                    href="https://www.google.com/maps/search/?api=1&query=Espa%C3%A7o+Elegance"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Jardim%2C+Rua+Angico%2C+830%2C+Jardin%C3%B3polis%2C+Divin%C3%B3polis+-+MG%2C+35501-571"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="map-button"
@@ -249,7 +250,8 @@
 
             <p class="address">
 
-                Av. Principal, 1000 — Centro
+                Rua Angico, 830 — Jardinópolis<br>
+                Divinópolis/MG — CEP 35501-571
 
             </p>
 
@@ -268,7 +270,7 @@
 
 
                 <a
-                    href="https://www.google.com/maps/search/?api=1&query=Espa%C3%A7o+Elegance"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Jardim%2C+Rua+Angico%2C+830%2C+Jardin%C3%B3polis%2C+Divin%C3%B3polis+-+MG%2C+35501-571"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="outline"
@@ -600,8 +602,8 @@
 
                 <p>
 
-                    20 de dezembro<br>
-                    Domingo
+                    20 de março<br>
+                    Sábado
 
                 </p>
 
@@ -622,7 +624,7 @@
                 <p>
 
                     Recepção às<br>
-                    20:00
+                    22:00
 
                 </p>
 
@@ -642,8 +644,8 @@
 
                 <p>
 
-                    Espaço Elegance<br>
-                    Centro
+                    Villa Jardim<br>
+                    Jardinópolis
 
                 </p>
 
@@ -677,149 +679,59 @@
 
 
 
-    <!-- =====================================================
-         CONFIRMAÇÃO
-    ====================================================== -->
+   <!-- =====================================================
+     CONFIRMAÇÃO
+====================================================== -->
 
-    <section
-        id="confirmacao"
-        class="confirmation"
-    >
+<section id="confirmacao" class="confirmation">
 
+    <div class="section-title">
 
-        <div class="section-title">
+        <span>RSVP</span>
 
+        <h2>Confirme sua presença</h2>
 
-            <span>
-                RSVP
-            </span>
+        <p>
+            Sua presença tornará essa noite ainda mais especial.
+        </p>
 
+    </div>
 
-            <h2>
-                Confirme sua presença
-            </h2>
+    <div class="rsvp-form" id="rsvpForm">
 
+        <p class="rsvp-question">
+            Você estará conosco nessa noite especial?
+        </p>
 
-            <p>
+        <div class="rsvp-options">
 
-                Sua presença tornará essa noite ainda mais especial.
+            <button
+                type="button"
+                class="rsvp-yes"
+                id="confirmarPresenca"
+            >
+                SIM, ESTAREI PRESENTE
+            </button>
 
-            </p>
-
+            <button
+                type="button"
+                class="rsvp-no"
+                id="recusarPresenca"
+            >
+                INFELIZMENTE NÃO PODEREI IR
+            </button>
 
         </div>
 
+        <div
+            class="rsvp-message"
+            id="rsvpMessage"
+            hidden
+        ></div>
 
+    </div>
 
-        <form class="rsvp-form" id="rsvpForm">
-
-<label for="rsvpNome">
-    Nome completo
-</label>
-
-<input
-    type="text"
-    id="rsvpNome"
-    name="nome"
-    placeholder="Seu nome completo"
-    required
->
-
-
-<label for="rsvpTelefone">
-    Telefone
-</label>
-
-<input
-    type="tel"
-    id="rsvpTelefone"
-    name="telefone"
-    placeholder="Seu telefone"
->
-
-
-<label for="rsvpVai">
-    Você irá comparecer?
-</label>
-
-<select
-    id="rsvpVai"
-    name="vai"
-    required
->
-
-    <option value="">
-        Você irá comparecer?
-    </option>
-
-    <option value="sim">
-        Sim, estarei presente
-    </option>
-
-    <option value="nao">
-        Infelizmente não poderei
-    </option>
-
-</select>
-
-
-<label for="rsvpAcomp">
-    Número de acompanhantes
-</label>
-
-<select
-    id="rsvpAcomp"
-    name="num_acompanhantes"
->
-
-    <option value="0">
-        Nenhum acompanhante
-    </option>
-
-    <option value="1">
-        1 acompanhante
-    </option>
-
-    <option value="2">
-        2 acompanhantes
-    </option>
-
-    <option value="3">
-        3 acompanhantes
-    </option>
-
-    <option value="4">
-        4 acompanhantes
-    </option>
-
-    <option value="5">
-        5 acompanhantes
-    </option>
-
-</select>
-
-
-<div
-    class="acompanhantes-container"
-    id="acompanhantesContainer"
-></div>
-
-
-<div
-    class="rsvp-message"
-    id="rsvpMessage"
-    hidden
-></div>
-
-
-<button type="submit">
-    Confirmar presença
-</button>
-
-</form>
-
-
-    </section>
+</section>
 
 </main>
 
