@@ -55,7 +55,7 @@ const rsvpMessage = document.getElementById("rsvpMessage");
 const botaoConfirmar = document.getElementById("confirmarPresenca");
 const botaoRecusar = document.getElementById("recusarPresenca");
 
-const tokenConvite = new URLSearchParams(window.location.search).get("token");
+const tokenConvite = (new URLSearchParams(window.location.search).get("token") || new URLSearchParams(window.location.search).get("t"));
 
 const TEXTOS_STATUS = {
     pendente: "Aguardando sua confirmação",
