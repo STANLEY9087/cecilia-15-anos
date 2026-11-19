@@ -15,3 +15,7 @@ coverage/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Links/tokens gerados localmente (nunca versionar)
+saida-links-convidados.*
+convidados-links.*

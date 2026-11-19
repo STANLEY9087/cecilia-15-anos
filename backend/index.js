@@ -3,7 +3,9 @@
    Ponto de entrada do servidor
 ========================================================= */
 
-require("dotenv").config();
+const path = require("node:path");
+
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const pool = require("./db");
 const criarApp = require("./src/app");

@@ -6,7 +6,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-require("dotenv").config();
+require("dotenv").config({ path: path.join(__dirname, "..", ".env") });
 
 const { Pool } = require("pg");
 
@@ -24,17 +24,26 @@ async function executar() {
         return;
     }
 
-    if (!process.env.DATABASE_URL) {
-        console.error("DATABASE_URL não configurada. Migração NÃO executada.");
+    const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+
+    if (!connectionString) {
+        console.error(
+            "DIRECT_URL ou DATABASE_URL não configurada. Migração NÃO executada."
+        );
         process.exitCode = 1;
         return;
     }
 
-    const url = new URL(process.env.DATABASE_URL);
+    const origemConexao = process.env.DIRECT_URL
+        ? "DIRECT_URL"
+        : "DATABASE_URL";
+
+    const url = new URL(connectionString);
+    console.log(`Origem da conexão: ${origemConexao}`);
     console.log(`Banco alvo: ${url.hostname}${url.pathname}`);
 
     const pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
+        connectionString,
         connectionTimeoutMillis: 10000
     });
 

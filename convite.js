@@ -4,89 +4,16 @@
 ========================================================= */
 
 /* =========================================================
-   RSVP
-   ENDPOINT DO GOOGLE APPS SCRIPT
+   API DO RSVP
+   Troque a URL de produção abaixo no deploy.
 ========================================================= */
 
-const RSVP_ENDPOINT = "https://script.google.com/macros/s/AKfycbzBvDllNUVRSKBHnb6QHtUuyg_vswllZMvEuvBapHscYgXUQKB8Ri-PP5mfTiWEt3RnZA/exec";
+const API_BASE_URL =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "https://SEU-BACKEND.onrender.com";
 
-function normalizarTelefone(telefone) {
-    if (!telefone) return "";
-    return String(telefone).replace(/[^0-9]/g, "");
-}
-
-async function verificarTelefone(telefone) {
-    const telefoneNormalizado = normalizarTelefone(telefone);
-
-    if (!telefoneNormalizado) {
-        return { ok: false, cadastrado: false, mensagem: "Telefone inválido." };
-    }
-
-    if (!RSVP_ENDPOINT) {
-        return { ok: false, cadastrado: false, erro: "Endpoint não configurado." };
-    }
-
-    try {
-        const url = new URL(RSVP_ENDPOINT);
-        url.searchParams.append("acao", "verificar");
-        url.searchParams.append("telefone", telefoneNormalizado);
-
-        const resposta = await fetch(url.toString(), {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        if (!resposta.ok) {
-            throw new Error("Resposta HTTP inválida");
-        }
-
-        const resultado = await resposta.json();
-        return resultado;
-    } catch (erro) {
-        console.error("[RSVP] Falha ao verificar telefone:", erro);
-        return { ok: false, cadastrado: false, erro: "Não foi possível verificar o telefone." };
-    }
-}
-
-async function enviarRSVP(dados) {
-    if (!RSVP_ENDPOINT) {
-        console.error("[RSVP] Endpoint não configurado.");
-        return {
-            ok: false,
-            erro: "Endpoint não configurado."
-        };
-    }
-
-    try {
-        const resposta = await fetch(RSVP_ENDPOINT, {
-            method: "POST",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8"
-            },
-            body: JSON.stringify({
-                acao: "enviar",
-                nome: dados.nome,
-                telefone: dados.telefone,
-                vai: dados.vai,
-                acompanhantes: dados.acompanhantes || [],
-                enviadoEm: new Date().toISOString()
-            })
-        });
-
-        if (!resposta.ok) {
-            throw new Error("Resposta HTTP inválida");
-        }
-
-        const resultado = await resposta.json();
-        return resultado;
-    } catch (erro) {
-        console.error("[RSVP] Falha ao enviar:", erro);
-        return {
-            ok: false,
-            erro: "Não foi possível comunicar com o servidor."
-        };
-    }
-}
 
 /* =========================================================
    CONTADOR REGRESSIVO
@@ -117,319 +44,32 @@ function atualizarContador() {
 atualizarContador();
 setInterval(atualizarContador, 1000);
 
+
 /* =========================================================
-   RSVP
+   RSVP — ELEMENTOS
 ========================================================= */
 
-const rsvpForm = document.getElementById("rsvpForm");
-const rsvpTelefone = document.getElementById("rsvpTelefone");
-const rsvpVai = document.getElementById("rsvpVai");
-const rsvpAcomp = document.getElementById("rsvpAcomp");
-const acompanhantesContainer = document.getElementById("acompanhantesContainer");
+const rsvpGuestName = document.getElementById("rsvpGuestName");
+const rsvpGuestStatus = document.getElementById("rsvpGuestStatus");
 const rsvpMessage = document.getElementById("rsvpMessage");
+const botaoConfirmar = document.getElementById("confirmarPresenca");
+const botaoRecusar = document.getElementById("recusarPresenca");
 
-let telefoneBloqueado = false;
-let envioEmAndamento = false;
+const tokenConvite = new URLSearchParams(window.location.search).get("token");
 
-function bloquearFormularioSemMensagem() {
-    telefoneBloqueado = true;
+const TEXTOS_STATUS = {
+    pendente: "Aguardando sua confirmação",
+    confirmado: "Presença confirmada",
+    recusado: "Não poderá comparecer"
+};
 
-    if (rsvpForm) {
-        const inputs = rsvpForm.querySelectorAll("input, select, button");
-        inputs.forEach((el) => {
-            el.disabled = true;
-        });
-    }
+let statusAtual = null;
+let enviando = false;
+let conviteCarregado = false;
 
-    if (acompanhantesContainer) {
-        acompanhantesContainer.innerHTML = "";
-    }
-}
-
-function bloquearFormularioPorDuplicidade() {
-    telefoneBloqueado = true;
-
-    if (rsvpForm) {
-        const inputs = rsvpForm.querySelectorAll("input, select, button");
-        inputs.forEach((el) => {
-            el.disabled = true;
-        });
-    }
-
-    if (acompanhantesContainer) {
-        acompanhantesContainer.innerHTML = "";
-    }
-
-    mostrarMensagem(
-        "CONFIRMAÇÃO JÁ REALIZADA\n\nEste número de celular já foi utilizado para confirmar presença. Não é possível realizar uma nova confirmação.",
-        "error"
-    );
-}
-
-async function verificarEBloquearSeNecessario() {
-    if (!rsvpTelefone) return;
-
-    const telefone = rsvpTelefone.value.trim();
-    const telefoneNormalizado = normalizarTelefone(telefone);
-
-    if (!telefoneNormalizado || telefoneNormalizado.length < 8) {
-        return;
-    }
-
-        const resultado = await verificarTelefone(telefone);
-
-        if (resultado && (resultado.cadastrado === true || resultado.duplicado === true)) {
-            bloquearFormularioPorDuplicidade();
-            return;
-        }
-}
 
 /* =========================================================
-   ACOMPANHANTES
-   MÁXIMO: 5
-========================================================= */
-
-if (rsvpAcomp) {
-    rsvpAcomp.addEventListener("change", function () {
-        if (!acompanhantesContainer) return;
-
-        acompanhantesContainer.innerHTML = "";
-
-        const quantidade = Math.min(
-            Math.max(Number(this.value) || 0, 0),
-            5
-        );
-
-        for (let i = 1; i <= quantidade; i++) {
-            const input = document.createElement("input");
-
-            input.type = "text";
-            input.name = `acompanhante_${i}`;
-            input.placeholder = `Nome completo do acompanhante ${i}`;
-            input.className = "acompanhante-input";
-            input.required = true;
-
-            acompanhantesContainer.appendChild(input);
-        }
-    });
-}
-
-/* =========================================================
-   MOSTRAR / OCULTAR ACOMPANHANTES
-========================================================= */
-
-if (rsvpVai) {
-    rsvpVai.addEventListener("change", function () {
-        if (this.value === "nao") {
-            if (rsvpAcomp) {
-                rsvpAcomp.value = "0";
-                rsvpAcomp.disabled = true;
-            }
-            if (acompanhantesContainer) {
-                acompanhantesContainer.innerHTML = "";
-            }
-        } else {
-            if (rsvpAcomp) {
-                rsvpAcomp.disabled = false;
-            }
-        }
-    });
-}
-
-if (rsvpTelefone) {
-    rsvpTelefone.addEventListener("blur", verificarEBloquearSeNecessario);
-    rsvpTelefone.addEventListener("input", function() {
-        telefoneBloqueado = false;
-        if (rsvpMessage) {
-            rsvpMessage.hidden = true;
-        }
-    });
-}
-
-/* =========================================================
-   ENVIO DO RSVP
-========================================================= */
-
-if (rsvpForm) {
-    rsvpForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        if (telefoneBloqueado) {
-            bloquearFormularioPorDuplicidade();
-            return;
-        }
-
-        if (envioEmAndamento) {
-            return;
-        }
-
-        const nomeInput = document.getElementById("rsvpNome");
-        const nome = nomeInput ? nomeInput.value.trim() : "";
-        const telefone = rsvpTelefone ? rsvpTelefone.value.trim() : "";
-        const vai = rsvpVai ? rsvpVai.value : "";
-
-        /* =========================
-           VALIDAR NOME
-        ========================== */
-
-        if (!nome) {
-            mostrarMensagem(
-                "Por favor, informe seu nome.",
-                "error"
-            );
-            return;
-        }
-
-        /* =========================
-           VALIDAR TELEFONE
-        ========================== */
-
-        if (!telefone) {
-            mostrarMensagem(
-                "Por favor, informe seu telefone.",
-                "error"
-            );
-            return;
-        }
-
-        const telefoneNormalizado = normalizarTelefone(telefone);
-        if (!telefoneNormalizado || telefoneNormalizado.length < 8) {
-            mostrarMensagem(
-                "Por favor, informe um telefone válido.",
-                "error"
-            );
-            return;
-        }
-
-        /* =========================
-           VALIDAR PRESENÇA
-        ========================== */
-
-        if (!vai) {
-            mostrarMensagem(
-                "Por favor, informe se você irá comparecer.",
-                "error"
-            );
-            return;
-        }
-
-        /* =========================
-           VALIDAR ACOMPANHANTES
-        ========================== */
-
-        const quantidade = vai === "sim" ? (Number(rsvpAcomp ? rsvpAcomp.value : 0) || 0) : 0;
-        const acompanhantes = [];
-
-        if (quantidade > 0 && acompanhantesContainer) {
-            const campos = acompanhantesContainer.querySelectorAll(".acompanhante-input");
-
-            for (const campo of campos) {
-                if (!campo.value.trim()) {
-                    mostrarMensagem(
-                        "Informe o nome de todos os acompanhantes.",
-                        "error"
-                    );
-                    campo.focus();
-                    return;
-                }
-                acompanhantes.push(campo.value.trim());
-            }
-        }
-
-        /* =========================
-           VERIFICAÇÃO ANTES DO ENVIO
-        ========================== */
-
-        envioEmAndamento = true;
-
-        const verificacao = await verificarTelefone(telefone);
-        if (verificacao && (verificacao.cadastrado === true || verificacao.duplicado === true)) {
-            envioEmAndamento = false;
-            bloquearFormularioPorDuplicidade();
-            return;
-        }
-
-        if (!verificacao || verificacao.ok === false) {
-            envioEmAndamento = false;
-            mostrarMensagem(
-                "Não foi possível validar o telefone. Tente novamente.",
-                "error"
-            );
-            return;
-        }
-
-        /* =========================
-           ENVIO
-        ========================== */
-
-        const botao = rsvpForm.querySelector('button[type="submit"]');
-        if (!botao) {
-            envioEmAndamento = false;
-            return;
-        }
-
-        const textoOriginal = botao.textContent;
-
-        botao.disabled = true;
-        botao.textContent = "Enviando...";
-        if (rsvpMessage) rsvpMessage.hidden = true;
-
-        const resultado = await enviarRSVP({
-            nome,
-            telefone,
-            vai,
-            acompanhantes
-        });
-
-        botao.disabled = false;
-        botao.textContent = textoOriginal;
-        envioEmAndamento = false;
-        if (!resultado.ok) {
-            if (resultado.codigo === "TELEFONE_DUPLICADO" || resultado.erro === "TELEFONE_DUPLICADO") {
-                bloquearFormularioPorDuplicidade();
-                return;
-            }
-            if (resultado.codigo === "LIMITE_100_PESSOAS" || resultado.erro === "LIMITE_100_PESSOAS") {
-                mostrarMensagem(
-                    "Limite de confirmações atingido.",
-                    "error"
-                );
-                return;
-            }
-            if (resultado.codigo === "DADOS_INVALIDOS") {
-                mostrarMensagem("Dados inválidos. Verifique as informações.", "error");
-                return;
-            }
-
-            mostrarMensagem(
-                "Não foi possível enviar sua confirmação. Tente novamente.",
-                "error"
-            );
-
-            return;
-        }
-        /* =========================
-           CONFIRMAÇÃO
-        ========================== */
-
-        mostrarMensagem(
-            vai === "nao"
-                ? `Obrigado, ${nome}. Sua resposta foi registrada.`
-                : `Obrigado, ${nome}! Sua presença foi confirmada. 💙`,
-            "success"
-        );
-
-
-        /* =========================
-           BLOQUEAR APÓS CONFIRMAÇÃO
-        ========================== */
-
-        bloquearFormularioSemMensagem();
-    });
-}
-
-/* =========================================================
-   MENSAGEM
+   MENSAGENS
 ========================================================= */
 
 function mostrarMensagem(texto, tipo) {
@@ -439,3 +79,210 @@ function mostrarMensagem(texto, tipo) {
     rsvpMessage.textContent = texto;
     rsvpMessage.className = `rsvp-message ${tipo}`;
 }
+
+function limparMensagem() {
+    if (!rsvpMessage) return;
+
+    rsvpMessage.hidden = true;
+    rsvpMessage.textContent = "";
+    rsvpMessage.className = "rsvp-message";
+}
+
+
+/* =========================================================
+   ESTADO VISUAL
+========================================================= */
+
+function habilitarBotoes(habilitado) {
+    [botaoConfirmar, botaoRecusar].forEach((botao) => {
+        if (botao) {
+            botao.disabled = !habilitado;
+        }
+    });
+}
+
+function destacarBotao(status) {
+    if (botaoConfirmar) {
+        botaoConfirmar.classList.toggle("is-selected", status === "confirmado");
+    }
+
+    if (botaoRecusar) {
+        botaoRecusar.classList.toggle("is-selected", status === "recusado");
+    }
+}
+
+function atualizarStatusTela(status) {
+    statusAtual = status || null;
+
+    if (rsvpGuestStatus) {
+        rsvpGuestStatus.textContent = TEXTOS_STATUS[statusAtual] || "";
+    }
+
+    destacarBotao(statusAtual);
+}
+
+
+/* =========================================================
+   CARREGAMENTO DO CONVITE
+========================================================= */
+
+async function carregarConvite() {
+    habilitarBotoes(false);
+
+    if (!tokenConvite) {
+        if (rsvpGuestName) rsvpGuestName.textContent = "";
+        if (rsvpGuestStatus) rsvpGuestStatus.textContent = "";
+
+        mostrarMensagem(
+            "Acesse este convite através do link individual enviado para você.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (rsvpGuestName) rsvpGuestName.textContent = "";
+    if (rsvpGuestStatus) rsvpGuestStatus.textContent = "Carregando convite...";
+
+    limparMensagem();
+
+    try {
+        const resposta = await fetch(
+            `${API_BASE_URL}/api/convite/${encodeURIComponent(tokenConvite)}`,
+            { headers: { Accept: "application/json" } }
+        );
+
+        if (resposta.status === 404) {
+            if (rsvpGuestStatus) rsvpGuestStatus.textContent = "";
+
+            mostrarMensagem(
+                "Convite não encontrado. Verifique o link recebido.",
+                "error"
+            );
+
+            return;
+        }
+
+        if (!resposta.ok) {
+            throw new Error("Resposta inesperada do servidor.");
+        }
+
+        const corpo = await resposta.json();
+
+        if (!corpo || corpo.ok !== true || !corpo.data) {
+            throw new Error("Resposta inválida do servidor.");
+        }
+
+        if (rsvpGuestName) {
+            rsvpGuestName.textContent = `Olá, ${corpo.data.nome}`;
+        }
+
+        atualizarStatusTela(corpo.data.status);
+
+        conviteCarregado = true;
+        habilitarBotoes(true);
+    } catch (erro) {
+        console.error("[RSVP] Falha ao carregar o convite:", erro);
+
+        if (rsvpGuestName) rsvpGuestName.textContent = "";
+        if (rsvpGuestStatus) rsvpGuestStatus.textContent = "";
+
+        mostrarMensagem(
+            "Não foi possível carregar seu convite. Verifique sua conexão e tente novamente.",
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   ENVIO DA RESPOSTA
+========================================================= */
+
+async function enviarResposta(status) {
+    if (enviando || !conviteCarregado || !tokenConvite) {
+        return;
+    }
+
+    enviando = true;
+
+    habilitarBotoes(false);
+
+    if (rsvpGuestStatus) {
+        rsvpGuestStatus.textContent = "Enviando sua resposta...";
+    }
+
+    limparMensagem();
+
+    try {
+        const resposta = await fetch(
+            `${API_BASE_URL}/api/convite/${encodeURIComponent(tokenConvite)}/rsvp`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json"
+                },
+                body: JSON.stringify({ status })
+            }
+        );
+
+        const corpo = await resposta.json().catch(() => null);
+
+        if (!resposta.ok) {
+            const mensagemApi =
+                corpo && corpo.erro && corpo.erro.mensagem
+                    ? corpo.erro.mensagem
+                    : "Não foi possível registrar sua resposta. Tente novamente.";
+
+            throw new Error(mensagemApi);
+        }
+
+        const dados = (corpo && corpo.data) || {};
+        const novoStatus = dados.status || status;
+
+        if (dados.nome && rsvpGuestName) {
+            rsvpGuestName.textContent = `Olá, ${dados.nome}`;
+        }
+
+        atualizarStatusTela(novoStatus);
+
+        mostrarMensagem(
+            novoStatus === "confirmado"
+                ? "Presença confirmada com sucesso! Caso precise alterar sua resposta depois, basta usar este mesmo link."
+                : "Resposta registrada. Sentiremos sua falta! Caso mude de ideia, você pode confirmar por este mesmo link.",
+            "success"
+        );
+    } catch (erro) {
+        console.error("[RSVP] Falha ao enviar a resposta:", erro);
+
+        atualizarStatusTela(statusAtual);
+
+        mostrarMensagem(
+            erro.message ||
+                "Não foi possível registrar sua resposta. Tente novamente.",
+            "error"
+        );
+    } finally {
+        enviando = false;
+
+        if (conviteCarregado) {
+            habilitarBotoes(true);
+        }
+    }
+}
+
+
+/* =========================================================
+   EVENTOS
+========================================================= */
+
+if (botaoConfirmar) {
+    botaoConfirmar.addEventListener("click", () => enviarResposta("confirmado"));
+}
+
+if (botaoRecusar) {
+    botaoRecusar.addEventListener("click", () => enviarResposta("recusado"));
+}
+
+carregarConvite();

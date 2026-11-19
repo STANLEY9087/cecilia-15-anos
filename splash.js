@@ -43,7 +43,7 @@ function enterInvitation() {
 
     setTimeout(() => {
 
-        window.location.href = "convite.html";
+        window.location.href = "convite.html" + window.location.search;
 
     }, 1700);
 
