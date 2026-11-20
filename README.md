@@ -17,6 +17,7 @@ Convite digital com RSVP por **convite / família**.
 
 - `index.html`, `splash.css`, `splash.js` — splash screen (repassa o `?token=` para o convite).
 - `convite.html`, `convite.css`, `convite.js` — convite e seção de RSVP por família.
+- `admin.html`, `admin.css`, `admin.js` — painel administrativo protegido por senha.
 - `Imagens/`, `video/` — mídias do convite.
 - `backend/` — API RSVP em Node.js + Express 5 + PostgreSQL (Neon).
 
@@ -52,6 +53,8 @@ Rotas:
 - `POST /api/convite/:token/rsvp`
 - `PATCH /api/convite/:token/membros/:membroId`
 - `POST /api/convite/:token/membros`
+- `GET /api/admin/convites` (Bearer `ADMIN_PASSWORD`)
+- `POST /api/admin/convites` (Bearer `ADMIN_PASSWORD`)
 
 ## Convite e RSVP
 
@@ -61,11 +64,25 @@ Rotas:
 - Convites confirmados podem adicionar convidados extras enquanto houver vagas no teto de 100.
 - A URL da API fica em `API_BASE_URL` no topo de `convite.js` (`http://localhost:3000` em desenvolvimento).
 
+## Painel administrativo
+
+Acesse `admin.html`, informe a senha configurada em `ADMIN_PASSWORD` e acompanhe:
+
+- placar real de pessoas (confirmadas, pendentes, não irão e vagas livres de 100);
+- busca por convite ou familiar e filtros por status;
+- contagem de confirmados por família, lista de membros e badge `EXTRA`;
+- cópia do link de cada convite para WhatsApp;
+- exportação de todas as pessoas em CSV;
+- criação de novos convites individuais ou familiares.
+
+A senha fica apenas em `sessionStorage`; a API valida o cabeçalho `Authorization: Bearer <senha>`.
+
 ## Situação atual
 
 - ✅ Backend refatorado para 39 convites / 91 pessoas (9 vagas livres no teto de 100).
 - ✅ Migração `002_convites_familia.sql` criada e idempotente.
 - ✅ API com consulta por família, RSVP do responsável, familiares individuais e convidados extras.
+- ✅ Painel administrativo com autenticação, resumo, busca, filtros, links e exportação CSV.
 - ✅ Frontend integrado, com identidade visual dourada/azul-marinho.
-- ✅ 33 testes automatizados (100% de aprovação, sem acessar o banco real).
-- ⏳ Deploy no Render/Netlify pendente: configurar `API_BASE_URL` em `convite.js`, `DATABASE_URL`/`DIRECT_URL` e `FRONTEND_URL` no backend.
+- ✅ 43 testes automatizados (100% de aprovação, sem acessar o banco real).
+- ⏳ Deploy no Render/Netlify pendente: configurar `API_BASE_URL`, `DATABASE_URL`/`DIRECT_URL`, `FRONTEND_URL` e `ADMIN_PASSWORD`.

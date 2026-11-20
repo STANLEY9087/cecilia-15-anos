@@ -9,6 +9,7 @@ const { rateLimit } = require("express-rate-limit");
 
 const criarRotasHealth = require("./rotas/health");
 const criarRotasConvite = require("./rotas/convite");
+const criarRotasAdmin = require("./rotas/admin");
 const naoEncontrado = require("./middleware/naoEncontrado");
 const tratarErros = require("./middleware/tratarErros");
 
@@ -40,7 +41,7 @@ function criarApp({ pool, frontendUrl = "", rateLimitEnabled = true } = {}) {
         cors({
             origin: origensPermitidas.length ? origensPermitidas : false,
             methods: ["GET", "POST", "PATCH", "OPTIONS"],
-            allowedHeaders: ["Content-Type"],
+            allowedHeaders: ["Content-Type", "Authorization"],
             optionsSuccessStatus: 204
         })
     );
@@ -68,6 +69,10 @@ function criarApp({ pool, frontendUrl = "", rateLimitEnabled = true } = {}) {
 
     app.use("/api/health", criarRotasHealth(pool));
     app.use("/api/convite", criarRotasConvite(pool));
+    app.use(
+        "/api/admin",
+        criarRotasAdmin({ pool, frontendUrl })
+    );
 
     app.use(naoEncontrado);
     app.use(tratarErros);

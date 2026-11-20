@@ -2,6 +2,8 @@
    Acesso aos dados dos convites e convidados
 ========================================================= */
 
+const { gerarToken } = require("../utils/token");
+
 const LIMITE_MAXIMO_CONVIDADOS = 100;
 
 const SQL_BUSCAR_CONVITE = `
@@ -22,6 +24,18 @@ const SQL_CONTAR_ATIVOS = `
     SELECT COUNT(*)::int AS total
       FROM convidados
      WHERE status <> 'recusado'
+`;
+
+const SQL_LISTAR_TODOS_CONVITES = `
+    SELECT id, titulo, responsavel_nome, token, status, respondido_em
+      FROM convites
+  ORDER BY id
+`;
+
+const SQL_LISTAR_TODOS_CONVIDADOS = `
+    SELECT id, convite_id, nome, eh_responsavel, eh_extra, status, respondido_em
+      FROM convidados
+  ORDER BY id
 `;
 
 /**
@@ -195,6 +209,139 @@ async function adicionarMembro(pool, token, nome) {
     });
 }
 
+function normalizarBaseUrl(frontendUrl) {
+    return String(frontendUrl || "")
+        .trim()
+        .replace(/\/+$/, "");
+}
+
+function montarLinkConvite(frontendUrl, token) {
+    return `${normalizarBaseUrl(frontendUrl)}/?token=${encodeURIComponent(token)}`;
+}
+
+function contarPorStatus(registros, status) {
+    return registros.filter((registro) => registro.status === status).length;
+}
+
+/**
+ * Monta o painel administrativo: resumo real do banco e todos os
+ * convites com seus membros (incluindo o responsável).
+ */
+async function obterPainelAdmin(pool, frontendUrl = "") {
+    const resultadoConvites = await pool.query(SQL_LISTAR_TODOS_CONVITES);
+    const resultadoConvidados = await pool.query(SQL_LISTAR_TODOS_CONVIDADOS);
+
+    const convites = resultadoConvites.rows;
+    const convidados = resultadoConvidados.rows;
+
+    const ativos = convidados.filter(
+        (convidado) => convidado.status !== "recusado"
+    ).length;
+
+    const resumo = {
+        total_convites: convites.length,
+        convites_confirmados: contarPorStatus(convites, "confirmado"),
+        convites_pendentes: contarPorStatus(convites, "pendente"),
+        convites_recusados: contarPorStatus(convites, "recusado"),
+        total_pessoas: convidados.length,
+        pessoas_confirmadas: contarPorStatus(convidados, "confirmado"),
+        pessoas_pendentes: contarPorStatus(convidados, "pendente"),
+        pessoas_recusadas: contarPorStatus(convidados, "recusado"),
+        limite_maximo: LIMITE_MAXIMO_CONVIDADOS,
+        vagas_disponiveis: calcularVagas(ativos)
+    };
+
+    const lista = convites.map((convite) => ({
+        id: convite.id,
+        titulo: convite.titulo,
+        responsavel_nome: convite.responsavel_nome,
+        status: convite.status,
+        respondido_em: convite.respondido_em,
+        link: montarLinkConvite(frontendUrl, convite.token),
+        membros: convidados
+            .filter((convidado) => convidado.convite_id === convite.id)
+            .map((convidado) => ({
+                id: convidado.id,
+                nome: convidado.nome,
+                eh_responsavel: convidado.eh_responsavel,
+                eh_extra: convidado.eh_extra,
+                status: convidado.status,
+                respondido_em: convidado.respondido_em
+            }))
+    }));
+
+    return { resumo, convites: lista };
+}
+
+/**
+ * Cria um convite (individual ou familiar) com token novo.
+ * O teto considera todas as pessoas ativas (status != 'recusado').
+ */
+async function criarConviteAdmin(
+    pool,
+    { titulo, responsavelNome, membros = [], frontendUrl = "" }
+) {
+    return emTransacao(pool, async (db) => {
+        await db.query(
+            "SELECT pg_advisory_xact_lock(hashtext('cecilia_15_anos_teto'))"
+        );
+
+        const totalAtivos = await contarAtivos(db);
+        const novasPessoas = 1 + membros.length;
+
+        if (totalAtivos + novasPessoas > LIMITE_MAXIMO_CONVIDADOS) {
+            return { convite: null, erro: "LIMITE_ATINGIDO" };
+        }
+
+        const token = gerarToken();
+
+        const resultadoConvite = await db.query(
+            `INSERT INTO convites
+                 (titulo, responsavel_nome, token, status)
+             VALUES ($1, $2, $3, 'pendente')
+         RETURNING id, titulo, responsavel_nome, token, status, respondido_em`,
+            [titulo, responsavelNome, token]
+        );
+
+        const convite = resultadoConvite.rows[0];
+
+        const resultadoResponsavel = await db.query(
+            `INSERT INTO convidados
+                 (convite_id, nome, eh_responsavel, eh_extra, status)
+             VALUES ($1, $2, TRUE, FALSE, 'pendente')
+         RETURNING id, nome, eh_responsavel, eh_extra, status, respondido_em`,
+            [convite.id, responsavelNome]
+        );
+
+        const pessoas = [resultadoResponsavel.rows[0]];
+
+        for (const nome of membros) {
+            const resultadoMembro = await db.query(
+                `INSERT INTO convidados
+                     (convite_id, nome, eh_responsavel, eh_extra, status)
+                 VALUES ($1, $2, FALSE, FALSE, 'pendente')
+             RETURNING id, nome, eh_responsavel, eh_extra, status, respondido_em`,
+                [convite.id, nome]
+            );
+
+            pessoas.push(resultadoMembro.rows[0]);
+        }
+
+        return {
+            erro: null,
+            convite: {
+                id: convite.id,
+                titulo: convite.titulo,
+                responsavel_nome: convite.responsavel_nome,
+                status: convite.status,
+                respondido_em: convite.respondido_em,
+                link: montarLinkConvite(frontendUrl, convite.token),
+                membros: pessoas
+            }
+        };
+    });
+}
+
 async function verificarBanco(pool) {
     await pool.query("SELECT 1");
 }
@@ -208,5 +355,7 @@ module.exports = {
     atualizarRsvp,
     atualizarMembro,
     adicionarMembro,
+    obterPainelAdmin,
+    criarConviteAdmin,
     verificarBanco
 };

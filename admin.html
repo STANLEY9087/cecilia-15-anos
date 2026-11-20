@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | Cecília 15 Anos</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<main class="admin-shell">
+
+    <!-- =====================================================
+         LOGIN
+    ====================================================== -->
+
+    <section class="login-view" id="loginView">
+
+        <div class="login-card">
+
+            <span class="eyebrow">
+                ÁREA RESTRITA
+            </span>
+
+            <h1>
+                Painel do Convite
+            </h1>
+
+            <p class="login-subtitle">
+                Cecília · 15 anos
+            </p>
+
+            <p class="login-text">
+                Informe a senha administrativa para acompanhar
+                as confirmações das famílias.
+            </p>
+
+            <form id="loginForm" class="login-form">
+
+                <label for="adminPassword">
+                    SENHA DO ADMINISTRADOR
+                </label>
+
+                <input
+                    type="password"
+                    id="adminPassword"
+                    name="senha"
+                    autocomplete="current-password"
+                    placeholder="Digite a senha"
+                    required
+                >
+
+                <button type="submit" id="loginButton">
+                    Entrar
+                </button>
+
+            </form>
+
+            <p
+                class="admin-alert error"
+                id="loginError"
+                role="alert"
+                hidden
+            ></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         PAINEL
+    ====================================================== -->
+
+    <section class="admin-view" id="adminView" hidden>
+
+        <header class="admin-header">
+
+            <div class="admin-heading">
+
+                <span class="eyebrow">
+                    PAINEL ADMINISTRATIVO
+                </span>
+
+                <h1>
+                    Cecília · 15 anos
+                </h1>
+
+                <p id="adminSubtitle">
+                    Carregando convites...
+                </p>
+
+            </div>
+
+            <div class="header-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-gold"
+                    id="downloadCsv"
+                >
+                    Baixar Planilha (.csv)
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-ghost"
+                    id="logoutButton"
+                >
+                    Sair
+                </button>
+
+            </div>
+
+        </header>
+
+        <p
+            class="admin-alert"
+            id="adminAlert"
+            role="status"
+            aria-live="polite"
+            hidden
+        ></p>
+
+
+        <!-- RESUMO -->
+
+        <section class="summary-grid" aria-label="Resumo de pessoas">
+
+            <article class="summary-card confirmed">
+
+                <span class="summary-label">
+                    Confirmadas
+                </span>
+
+                <strong id="resumoConfirmadas">0</strong>
+
+                <span class="summary-hint">
+                    pessoas confirmadas
+                </span>
+
+            </article>
+
+            <article class="summary-card pending">
+
+                <span class="summary-label">
+                    Pendentes
+                </span>
+
+                <strong id="resumoPendentes">0</strong>
+
+                <span class="summary-hint">
+                    aguardando resposta
+                </span>
+
+            </article>
+
+            <article class="summary-card refused">
+
+                <span class="summary-label">
+                    Não irão
+                </span>
+
+                <strong id="resumoRecusadas">0</strong>
+
+                <span class="summary-hint">
+                    pessoas recusadas
+                </span>
+
+            </article>
+
+            <article class="summary-card vacancies">
+
+                <span class="summary-label">
+                    Vagas livres
+                </span>
+
+                <strong id="resumoVagas">0</strong>
+
+                <span class="summary-hint">
+                    de 100 no total
+                </span>
+
+            </article>
+
+        </section>
+
+
+        <!-- BUSCA E FILTROS -->
+
+        <section class="toolbar" aria-label="Busca e filtros">
+
+            <div class="search-field">
+
+                <label for="buscaConvites" class="sr-only">
+                    Buscar convite ou familiar
+                </label>
+
+                <input
+                    type="search"
+                    id="buscaConvites"
+                    placeholder="Buscar por convite ou familiar..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <div class="filters" id="filtros" role="group" aria-label="Filtrar por status">
+
+                <button
+                    type="button"
+                    class="filter-btn is-active"
+                    data-status=""
+                    aria-pressed="true"
+                >
+                    Todos
+                </button>
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-status="confirmado"
+                    aria-pressed="false"
+                >
+                    Confirmados
+                </button>
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-status="pendente"
+                    aria-pressed="false"
+                >
+                    Pendentes
+                </button>
+
+                <button
+                    type="button"
+                    class="filter-btn"
+                    data-status="recusado"
+                    aria-pressed="false"
+                >
+                    Recusados
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- LISTA DE CONVITES -->
+
+        <section class="invites-section">
+
+            <div class="section-heading">
+
+                <h2>
+                    Convites por família
+                </h2>
+
+                <span id="resultCount">
+                    0 convites
+                </span>
+
+            </div>
+
+            <div class="invites-list" id="convitesList"></div>
+
+            <p class="empty-state" id="emptyState" hidden>
+                Nenhum convite encontrado com os filtros atuais.
+            </p>
+
+        </section>
+
+
+        <!-- NOVO CONVITE -->
+
+        <details class="new-invite" id="newInvitePanel">
+
+            <summary>
+                + Criar novo convite
+            </summary>
+
+            <form id="newInviteForm" class="new-invite-form">
+
+                <div class="field">
+
+                    <label for="novoTitulo">
+                        TÍTULO DO CONVITE
+                    </label>
+
+                    <input
+                        type="text"
+                        id="novoTitulo"
+                        name="titulo"
+                        maxlength="150"
+                        placeholder="Ex.: Flávia &amp; família"
+                        required
+                    >
+
+                </div>
+
+                <div class="field">
+
+                    <label for="novoResponsavel">
+                        RESPONSÁVEL
+                    </label>
+
+                    <input
+                        type="text"
+                        id="novoResponsavel"
+                        name="responsavel_nome"
+                        maxlength="150"
+                        placeholder="Ex.: Flávia"
+                        required
+                    >
+
+                </div>
+
+                <div class="field">
+
+                    <label for="novosMembros">
+                        FAMILIARES (UM NOME POR LINHA, OPCIONAL)
+                    </label>
+
+                    <textarea
+                        id="novosMembros"
+                        name="membros"
+                        rows="4"
+                        placeholder="Ana&#10;Stanley&#10;B&#234;nicio"
+                    ></textarea>
+
+                </div>
+
+                <button type="submit" class="btn btn-gold" id="newInviteButton">
+                    Criar convite
+                </button>
+
+            </form>
+
+        </details>
+
+    </section>
+
+</main>
+
+<script src="admin.js"></script>
+
+</body>
+</html>

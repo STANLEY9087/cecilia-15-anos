@@ -29,6 +29,12 @@ function criarPoolFalso({
             0
         ) + 1;
 
+    let proximoIdConvite =
+        registrosConvites.reduce(
+            (maior, registro) => Math.max(maior, registro.id || 0),
+            0
+        ) + 1;
+
     function buscarConvitePorId(id) {
         return registrosConvites.find((convite) => convite.id === id) || null;
     }
@@ -82,6 +88,36 @@ function criarPoolFalso({
                 )
             ) {
                 return { rows: [{}], rowCount: 1 };
+            }
+
+            if (
+                /^SELECT id, titulo, responsavel_nome, token, status, respondido_em FROM convites ORDER BY id$/i.test(
+                    sql
+                )
+            ) {
+                const convitesOrdenados = [...registrosConvites].sort(
+                    (a, b) => a.id - b.id
+                );
+
+                return {
+                    rows: convitesOrdenados,
+                    rowCount: convitesOrdenados.length
+                };
+            }
+
+            if (
+                /^SELECT id, convite_id, nome, eh_responsavel, eh_extra, status, respondido_em FROM convidados ORDER BY id$/i.test(
+                    sql
+                )
+            ) {
+                const convidadosOrdenados = [...registrosConvidados].sort(
+                    (a, b) => a.id - b.id
+                );
+
+                return {
+                    rows: convidadosOrdenados,
+                    rowCount: convidadosOrdenados.length
+                };
             }
 
             if (
@@ -207,6 +243,46 @@ function criarPoolFalso({
                     rows: [resumoMembro(registro)],
                     rowCount: 1
                 };
+            }
+
+            if (
+                /^INSERT INTO convites \(titulo, responsavel_nome, token, status\) VALUES \(\$1, \$2, \$3, 'pendente'\) RETURNING id, titulo, responsavel_nome, token, status, respondido_em$/i.test(
+                    sql
+                )
+            ) {
+                const convite = {
+                    id: proximoIdConvite++,
+                    titulo: parametros[0],
+                    responsavel_nome: parametros[1],
+                    token: parametros[2],
+                    status: "pendente",
+                    respondido_em: null
+                };
+
+                registrosConvites.push(convite);
+
+                return { rows: [convite], rowCount: 1 };
+            }
+
+            const insercaoPessoa = sql.match(
+                /^INSERT INTO convidados \(convite_id, nome, eh_responsavel, eh_extra, status\) VALUES \(\$1, \$2, (TRUE|FALSE), FALSE, 'pendente'\) RETURNING id, nome, eh_responsavel, eh_extra, status, respondido_em$/i
+            );
+
+            if (insercaoPessoa) {
+                const registro = {
+                    id: proximoIdConvidado++,
+                    convite_id: parametros[0],
+                    nome: parametros[1],
+                    eh_responsavel:
+                        insercaoPessoa[1].toUpperCase() === "TRUE",
+                    eh_extra: false,
+                    status: "pendente",
+                    respondido_em: null
+                };
+
+                registrosConvidados.push(registro);
+
+                return { rows: [registro], rowCount: 1 };
             }
 
             if (

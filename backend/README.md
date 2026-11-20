@@ -40,7 +40,8 @@ backend/
 │   │   └── tratarErros.js           # tratamento centralizado de erros
 │   ├── rotas/
 │   │   ├── health.js                # GET /api/health
-│   │   └── convite.js               # rotas do convite/família
+│   │   ├── convite.js               # rotas do convite/família
+│   │   └── admin.js                 # rotas protegidas /api/admin
 │   ├── servicos/
 │   │   └── convidados.js            # SQL parametrizado + transações
 │   ├── utils/
@@ -86,8 +87,9 @@ Variáveis:
 | `DATABASE_URL` | String de conexão PostgreSQL **pooled** (host com `-pooler`). Usada pela aplicação. Obrigatória. |
 | `DIRECT_URL` | String de conexão **direta** (host sem `-pooler`). Usada por `migrate` e `seed`; se ausente, cai para `DATABASE_URL`. |
 | `PORT` | Porta HTTP. Padrão: `3000`. |
-| `FRONTEND_URL` | Origem(n) liberada(s) no CORS. Também é a base dos links gerados no CSV. Várias origens separadas por vírgula. Em produção é obrigatória. |
+| `FRONTEND_URL` | Origem(n) liberada(s) no CORS. Também é a base dos links gerados no CSV/painel. Várias origens separadas por vírgula. Em produção é obrigatória. |
 | `SITE_URL` | Fallback da base dos links caso `FRONTEND_URL` não esteja definida. |
+| `ADMIN_PASSWORD` | Senha do painel administrativo. Sem ela, `/api/admin/*` responde `503`. |
 | `NODE_ENV` | `development`, `production` ou `test`. |
 
 > O `.env` está no `.gitignore` e **nunca deve ser commitado**. O `.env.example` contém apenas valores fictícios.
@@ -202,6 +204,82 @@ Regras:
 - `404`: token inexistente
 - `409`: `CONVITE_NAO_CONFIRMADO` ou `LIMITE_ATINGIDO`
 
+### Rotas administrativas (`/api/admin`)
+
+Todas exigem o cabeçalho:
+
+```text
+Authorization: Bearer <ADMIN_PASSWORD>
+```
+
+Sem senha ou com senha incorreta: `401 NAO_AUTORIZADO`.
+Se `ADMIN_PASSWORD` não estiver configurada: `503 ADMIN_NAO_CONFIGURADO`.
+
+#### `GET /api/admin/convites`
+
+Retorna o resumo consolidado e todos os convites com seus membros
+(incluindo o responsável), além do link pronto para envio.
+
+```json
+{
+  "ok": true,
+  "data": {
+    "resumo": {
+      "total_convites": 39,
+      "convites_confirmados": 0,
+      "convites_pendentes": 39,
+      "convites_recusados": 0,
+      "total_pessoas": 91,
+      "pessoas_confirmadas": 0,
+      "pessoas_pendentes": 91,
+      "pessoas_recusadas": 0,
+      "limite_maximo": 100,
+      "vagas_disponiveis": 9
+    },
+    "convites": [
+      {
+        "id": 1,
+        "titulo": "Flávia & família",
+        "responsavel_nome": "Flávia",
+        "status": "pendente",
+        "respondido_em": null,
+        "link": "https://seu-site.netlify.app/?token=...",
+        "membros": [
+          {
+            "id": 1,
+            "nome": "Flávia",
+            "eh_responsavel": true,
+            "eh_extra": false,
+            "status": "pendente",
+            "respondido_em": null
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### `POST /api/admin/convites`
+
+Cria um convite individual ou familiar.
+
+```json
+{
+  "titulo": "Carla & família",
+  "responsavel_nome": "Carla",
+  "membros": ["Ana", "Bia"]
+}
+```
+
+- `membros` é opcional.
+- O convite e todas as pessoas são criados como `pendente`.
+- O teto global de 100 pessoas ativas (`status != 'recusado'`) é verificado
+  dentro de transação com advisory lock.
+- `201`: convite criado (retorna dados e link).
+- `400`: título/responsável/membros inválidos ou campo extra.
+- `409 LIMITE_ATINGIDO`: a criação ultrapassaria 100 pessoas ativas.
+
 ## Formato padronizado das respostas
 
 Sucesso:
@@ -307,6 +385,9 @@ Cobertura atual:
 - bloqueio de familiar de outro convite;
 - adição de convidado extra;
 - bloqueio de convidado extra com convite pendente e ao atingir 100 pessoas;
+- autenticação do painel (sem senha, senha errada, senha certa e 503 sem configuração);
+- listagem consolidada do painel e criação de convite pelo admin;
+- bloqueio de criação administrativa ao atingir o teto de 100;
 - validações de status, nome, campos extras e JSON inválido;
 - timestamps (`respondido_em`);
 - SQL parametrizado;
@@ -321,12 +402,13 @@ Cobertura atual:
 - CORS restrito a `FRONTEND_URL` e com suporte a `GET`, `POST` e `PATCH`.
 - `helmet` e `express-rate-limit` habilitados.
 - Corpo JSON limitado a 10 KB.
-- Adição de convidados extras serializada por advisory lock para respeitar o teto de 100.
+- Adição de convidados extras e criação de convites serializadas por advisory lock para respeitar o teto de 100.
+- Painel administrativo protegido por `ADMIN_PASSWORD` em comparação de tempo constante (`crypto.timingSafeEqual`).
 - Credenciais somente em variáveis de ambiente.
 - Links/tokens gerados localmente ficam fora do controle de versão.
 
 ## Pendências (deploy)
 
-1. Configurar `FRONTEND_URL` no backend (origem do site no Netlify) e `DATABASE_URL`/`DIRECT_URL` no Render.
+1. Configurar `FRONTEND_URL`, `ADMIN_PASSWORD`, `DATABASE_URL` e `DIRECT_URL` no Render.
 2. Trocar `API_BASE_URL` em `convite.js` pela URL real do backend.
 3. Definir política de expiração/prazo de RSVP, se desejado.
