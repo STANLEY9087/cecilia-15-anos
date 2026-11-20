@@ -1,93 +1,197 @@
 [
-  "Cecília",
-  "Flávia",
-  "André",
-  "Ana",
-  "Stanley",
-  "Benício",
-  "Maria Izabel (Vó)",
-  "Wilson (Vô)",
-  "Fernanda",
-  "Juninho",
-  "Maria",
-  "João Vitor",
-  "Geovana",
-  "João Vitor",
-  "Dani",
-  "Gustavo",
-  "Toninho",
-  "Gute",
-  "Samanta",
-  "Isabela",
-  "Rodrigo",
-  "Clélia",
-  "Celso",
-  "Michele",
-  "Gabriele",
-  "Mônica",
-  "Igor",
-  "Andreza",
-  "Laís",
-  "João Vitor",
-  "Isac",
-  "Jéssica",
-  "Daniel",
-  "Fran",
-  "Isleia",
-  "Breno",
-  "Giovana",
-  "Gustavo",
-  "Reysla",
-  "Tia Fia",
-  "Fabíola",
-  "Tia Bii",
-  "Mariele",
-  "Geraldo",
-  "Geovanna",
-  "Cissa",
-  "Luís",
-  "Letícia",
-  "Giovanna",
-  "Maria Eduarda",
-  "Maria Luísa",
-  "Isadora",
-  "Lara",
-  "Isabela",
-  "Lara",
-  "Maria Eduarda",
-  "Pietra",
-  "Letícia",
-  "Maria Laura",
-  "Maria Fernanda",
-  "Maria Fernanda",
-  "Lázaro",
-  "Convidado",
-  "Aparecida",
-  "Danilo",
-  "Túlio",
-  "Rafael",
-  "Vó Carmem",
-  "Marcelo",
-  "Raíssa",
-  "Andréia",
-  "Zé",
-  "Letícia",
-  "Matheus",
-  "Karla",
-  "Marcos",
-  "Jaqueline",
-  "Marquinho",
-  "Marjorie",
-  "Adriana",
-  "André",
-  "Gabriel",
-  "Daniel",
-  "Yasmim",
-  "Nicolas",
-  "Lucas",
-  "Kelly",
-  "Rodrigo",
-  "Gustavo",
-  "Victor",
-  "Isabela"
+  {
+    "titulo": "Flávia & família",
+    "responsavel": "Flávia",
+    "membros": ["Cecília", "André", "Ana", "Stanley", "Benício"]
+  },
+  {
+    "titulo": "Maria Izabel & Wilson",
+    "responsavel": "Maria Izabel",
+    "membros": ["Wilson"]
+  },
+  {
+    "titulo": "Fernanda & família",
+    "responsavel": "Fernanda",
+    "membros": ["Juninho", "Maria", "João Vitor", "Geovana", "João Vitor"]
+  },
+  {
+    "titulo": "Dani & família",
+    "responsavel": "Dani",
+    "membros": ["Gustavo", "Toninho", "Gute", "Samanta", "Isabela", "Rodrigo"]
+  },
+  {
+    "titulo": "Cléria & família",
+    "responsavel": "Cléria",
+    "membros": ["Celso", "Michele", "Gabriele"]
+  },
+  {
+    "titulo": "Mônica & família",
+    "responsavel": "Mônica",
+    "membros": ["Igor"]
+  },
+  {
+    "titulo": "Andreza & família",
+    "responsavel": "Andreza",
+    "membros": ["Laís", "João Vitor", "Isac"]
+  },
+  {
+    "titulo": "Jéssica & família",
+    "responsavel": "Jéssica",
+    "membros": ["Daniel", "Fran"]
+  },
+  {
+    "titulo": "Isleia & família",
+    "responsavel": "Isleia",
+    "membros": ["Breno", "Giovana", "Gustavo", "Reysla"]
+  },
+  {
+    "titulo": "Tia Fia & família",
+    "responsavel": "Tia Fia",
+    "membros": ["Fabíola"]
+  },
+  {
+    "titulo": "Tia Bii",
+    "responsavel": "Tia Bii",
+    "membros": []
+  },
+  {
+    "titulo": "Mariele & família",
+    "responsavel": "Mariele",
+    "membros": ["Geraldo", "Geovanna"]
+  },
+  {
+    "titulo": "Cissa & família",
+    "responsavel": "Cissa",
+    "membros": ["Luís"]
+  },
+  {
+    "titulo": "Letícia & família",
+    "responsavel": "Letícia",
+    "membros": ["Giovanna"]
+  },
+  {
+    "titulo": "Maria Eduarda",
+    "responsavel": "Maria Eduarda",
+    "membros": []
+  },
+  {
+    "titulo": "Maria Luísa",
+    "responsavel": "Maria Luísa",
+    "membros": []
+  },
+  {
+    "titulo": "Isadora",
+    "responsavel": "Isadora",
+    "membros": []
+  },
+  {
+    "titulo": "Lara",
+    "responsavel": "Lara",
+    "membros": []
+  },
+  {
+    "titulo": "Isabela",
+    "responsavel": "Isabela",
+    "membros": []
+  },
+  {
+    "titulo": "Lara Barbosa",
+    "responsavel": "Lara Barbosa",
+    "membros": []
+  },
+  {
+    "titulo": "Maria Eduarda",
+    "responsavel": "Maria Eduarda",
+    "membros": []
+  },
+  {
+    "titulo": "Pietra",
+    "responsavel": "Pietra",
+    "membros": []
+  },
+  {
+    "titulo": "Letícia",
+    "responsavel": "Letícia",
+    "membros": []
+  },
+  {
+    "titulo": "Maria Laura",
+    "responsavel": "Maria Laura",
+    "membros": []
+  },
+  {
+    "titulo": "Maria Fernanda",
+    "responsavel": "Maria Fernanda",
+    "membros": []
+  },
+  {
+    "titulo": "Maria Fernanda",
+    "responsavel": "Maria Fernanda",
+    "membros": []
+  },
+  {
+    "titulo": "Lázaro & namorado",
+    "responsavel": "Lázaro",
+    "membros": ["Namorado"]
+  },
+  {
+    "titulo": "Aparecida & família",
+    "responsavel": "Aparecida",
+    "membros": ["Danilo"]
+  },
+  {
+    "titulo": "Túlio",
+    "responsavel": "Túlio",
+    "membros": []
+  },
+  {
+    "titulo": "Rafael",
+    "responsavel": "Rafael",
+    "membros": []
+  },
+  {
+    "titulo": "Vó Carmem",
+    "responsavel": "Vó Carmem",
+    "membros": []
+  },
+  {
+    "titulo": "Marcelo & família",
+    "responsavel": "Marcelo",
+    "membros": ["Letícia", "Matheus"]
+  },
+  {
+    "titulo": "Andréia & família",
+    "responsavel": "Andréia",
+    "membros": ["Raíssa", "Zé"]
+  },
+  {
+    "titulo": "Karla & família",
+    "responsavel": "Karla",
+    "membros": ["Marcos", "Jaqueline"]
+  },
+  {
+    "titulo": "Marquinho & família",
+    "responsavel": "Marquinho",
+    "membros": ["Marjorie"]
+  },
+  {
+    "titulo": "Adriana & família",
+    "responsavel": "Adriana",
+    "membros": ["André", "Gabriel", "Daniel"]
+  },
+  {
+    "titulo": "Yasmim & Nicolas",
+    "responsavel": "Yasmim",
+    "membros": ["Nicolas"]
+  },
+  {
+    "titulo": "Lucas",
+    "responsavel": "Lucas",
+    "membros": []
+  },
+  {
+    "titulo": "Kelly & família",
+    "responsavel": "Kelly",
+    "membros": ["Rodrigo", "Gustavo", "Victor", "Isabela"]
+  }
 ]

@@ -1,12 +1,14 @@
 /* =========================================================
-   Seed controlado dos convidados oficiais
+   Seed controlado dos convites e convidados oficiais
    Uso: npm run seed -- --confirm
 
    Regras:
    - exige --confirm na linha de comando;
-   - nunca insere se a tabela public.convidados já tiver registros;
-   - respeita o teto máximo de 100 convidados;
-   - gera tokens únicos com crypto.randomBytes (base64url);
+   - nunca insere se public.convites ou public.convidados
+     já tiverem registros;
+   - respeita o teto máximo de 100 pessoas;
+   - gera um token único por convite (base64url);
+   - insere o responsável e os membros dentro de uma transação;
    - gera localmente o CSV com os links (ignorado pelo Git).
 ========================================================= */
 
@@ -34,13 +36,15 @@ const ARQUIVO_SAIDA = path.join(
 );
 
 const BASE_URL = String(
-    process.env.SITE_URL || "https://convite-cecilia.netlify.app"
+    process.env.FRONTEND_URL ||
+        process.env.SITE_URL ||
+        "https://convite-cecilia.netlify.app"
 ).replace(/\/+$/, "");
 
 /**
- * Carrega e valida a lista de nomes antes de qualquer conexão.
+ * Carrega e valida os 39 convites antes de qualquer conexão.
  */
-function carregarNomes() {
+function carregarConvites() {
     let bruto;
 
     try {
@@ -63,22 +67,73 @@ function carregarNomes() {
         throw new Error("O arquivo de convidados deve conter um array JSON.");
     }
 
-    /* Mantém a ordem e as repetições; descarta apenas itens vazios. */
-    const nomes = lista
-        .map((nome) => (typeof nome === "string" ? nome.trim() : ""))
-        .filter(Boolean);
-
-    if (nomes.length < 1) {
-        throw new Error("A lista de convidados está vazia.");
+    if (lista.length === 0) {
+        throw new Error("A lista de convites está vazia.");
     }
 
-    if (nomes.length > LIMITE_MAXIMO_CONVIDADOS) {
+    const convites = lista.map((item, indice) => {
+        const posicao = indice + 1;
+
+        if (!item || typeof item !== "object" || Array.isArray(item)) {
+            throw new Error(`Convite ${posicao}: formato inválido.`);
+        }
+
+        const titulo =
+            typeof item.titulo === "string" ? item.titulo.trim() : "";
+        const responsavel =
+            typeof item.responsavel === "string"
+                ? item.responsavel.trim()
+                : "";
+
+        if (!titulo || titulo.length > 150) {
+            throw new Error(
+                `Convite ${posicao}: título ausente ou maior que 150 caracteres.`
+            );
+        }
+
+        if (!responsavel || responsavel.length > 150) {
+            throw new Error(
+                `Convite ${posicao}: responsável ausente ou maior que 150 caracteres.`
+            );
+        }
+
+        if (!Array.isArray(item.membros)) {
+            throw new Error(`Convite ${posicao}: "membros" deve ser um array.`);
+        }
+
+        const membros = item.membros.map((nome, indiceMembro) => {
+            if (typeof nome !== "string" || !nome.trim()) {
+                throw new Error(
+                    `Convite ${posicao}: membro ${indiceMembro + 1} inválido.`
+                );
+            }
+
+            const nomeLimpo = nome.trim();
+
+            if (nomeLimpo.length > 150) {
+                throw new Error(
+                    `Convite ${posicao}: membro ${indiceMembro + 1} maior que 150 caracteres.`
+                );
+            }
+
+            return nomeLimpo;
+        });
+
+        return { titulo, responsavel, membros };
+    });
+
+    const totalPessoas = convites.reduce(
+        (total, convite) => total + 1 + convite.membros.length,
+        0
+    );
+
+    if (totalPessoas > LIMITE_MAXIMO_CONVIDADOS) {
         throw new Error(
-            `A lista possui ${nomes.length} convidados; o limite máximo é ${LIMITE_MAXIMO_CONVIDADOS}.`
+            `Os convites somam ${totalPessoas} pessoas; o limite máximo é ${LIMITE_MAXIMO_CONVIDADOS}.`
         );
     }
 
-    return nomes;
+    return { convites, totalPessoas };
 }
 
 function campoCsv(valor) {
@@ -92,18 +147,20 @@ function campoCsv(valor) {
 }
 
 function montarCsv(registros) {
-    const linhas = ["Numero;ID;Nome;Status;Token;Link"];
+    const linhas = [
+        "id;titulo;responsavel;qtd_pessoas;status;link"
+    ];
 
-    registros.forEach((registro, indice) => {
-        const link = `${BASE_URL}/convite.html?token=${registro.token}`;
+    registros.forEach((registro) => {
+        const link = `${BASE_URL}/?token=${encodeURIComponent(registro.token)}`;
 
         linhas.push(
             [
-                indice + 1,
                 registro.id,
-                registro.nome,
+                registro.titulo,
+                registro.responsavel,
+                registro.qtd_pessoas,
                 registro.status,
-                registro.token,
                 link
             ]
                 .map(campoCsv)
@@ -145,23 +202,17 @@ async function executar() {
         return;
     }
 
-    let nomes;
+    let dados;
 
     try {
-        nomes = carregarNomes();
+        dados = carregarConvites();
     } catch (erro) {
         console.error(`${erro.message} Seed NÃO executado.`);
         process.exitCode = 1;
         return;
     }
 
-    if (nomes.length > LIMITE_MAXIMO_CONVIDADOS) {
-        console.error(
-            `Limite de ${LIMITE_MAXIMO_CONVIDADOS} convidados excedido. Seed NÃO executado.`
-        );
-        process.exitCode = 1;
-        return;
-    }
+    const { convites, totalPessoas } = dados;
 
     const pool = new Pool({
         connectionString,
@@ -173,24 +224,29 @@ async function executar() {
     try {
         cliente = await pool.connect();
 
-        const contagem = await cliente.query(
-            "SELECT COUNT(*)::int AS total FROM public.convidados"
+        const contagemConvites = await cliente.query(
+            "SELECT COUNT(*)::int AS total FROM public.convites"
         );
-        const totalAtual = contagem.rows[0].total;
+        const totalConvites = contagemConvites.rows[0].total;
 
-        if (totalAtual > 0) {
+        if (totalConvites > 0) {
             console.error(
-                `A tabela public.convidados já possui ${totalAtual} registro(s). ` +
+                `A tabela public.convites já possui ${totalConvites} registro(s). ` +
                     "Nada foi inserido para evitar duplicação."
             );
             process.exitCode = 1;
             return;
         }
 
-        if (totalAtual + nomes.length > LIMITE_MAXIMO_CONVIDADOS) {
+        const contagemConvidados = await cliente.query(
+            "SELECT COUNT(*)::int AS total FROM public.convidados"
+        );
+        const totalConvidados = contagemConvidados.rows[0].total;
+
+        if (totalConvidados > 0) {
             console.error(
-                `A inserção ultrapassaria o limite de ${LIMITE_MAXIMO_CONVIDADOS} convidados. ` +
-                    "Nada foi inserido."
+                `A tabela public.convidados já possui ${totalConvidados} registro(s). ` +
+                    "Nada foi inserido para evitar duplicação."
             );
             process.exitCode = 1;
             return;
@@ -201,17 +257,43 @@ async function executar() {
         await cliente.query("BEGIN");
 
         try {
-            for (const nome of nomes) {
+            for (const convite of convites) {
                 const token = gerarToken();
 
-                const resultado = await cliente.query(
-                    `INSERT INTO public.convidados (nome, token, status)
-                     VALUES ($1, $2, 'pendente')
-                     RETURNING id, nome, token, status`,
-                    [nome, token]
+                const resultadoConvite = await cliente.query(
+                    `INSERT INTO public.convites
+                         (titulo, responsavel_nome, token, status)
+                     VALUES ($1, $2, $3, 'pendente')
+                     RETURNING id, titulo, responsavel_nome, token, status`,
+                    [convite.titulo, convite.responsavel, token]
                 );
 
-                inseridos.push(resultado.rows[0]);
+                const registro = resultadoConvite.rows[0];
+
+                await cliente.query(
+                    `INSERT INTO public.convidados
+                         (convite_id, nome, eh_responsavel, eh_extra, status)
+                     VALUES ($1, $2, TRUE, FALSE, 'pendente')`,
+                    [registro.id, convite.responsavel]
+                );
+
+                for (const nome of convite.membros) {
+                    await cliente.query(
+                        `INSERT INTO public.convidados
+                             (convite_id, nome, eh_responsavel, eh_extra, status)
+                         VALUES ($1, $2, FALSE, FALSE, 'pendente')`,
+                        [registro.id, nome]
+                    );
+                }
+
+                inseridos.push({
+                    id: registro.id,
+                    titulo: registro.titulo,
+                    responsavel: registro.responsavel_nome,
+                    token: registro.token,
+                    status: registro.status,
+                    qtd_pessoas: 1 + convite.membros.length
+                });
             }
 
             await cliente.query("COMMIT");
@@ -226,20 +308,21 @@ async function executar() {
             "utf8"
         );
 
-        const vagasRestantes = LIMITE_MAXIMO_CONVIDADOS - inseridos.length;
+        const vagasRestantes = LIMITE_MAXIMO_CONVIDADOS - totalPessoas;
 
         console.log("");
         console.log("Seed concluído com sucesso.");
+        console.log(`- Convites inseridos: ${inseridos.length}`);
         console.log(
-            `- Convidados inseridos: ${inseridos.length} de ${LIMITE_MAXIMO_CONVIDADOS} vagas`
+            `- Pessoas inseridas: ${totalPessoas} de ${LIMITE_MAXIMO_CONVIDADOS} vagas`
         );
         console.log(`- Vagas restantes: ${vagasRestantes}`);
         console.log(`- CSV gerado: ${ARQUIVO_SAIDA}`);
-        console.log("- Primeiros convidados (tokens mascarados):");
+        console.log("- Primeiros convites (tokens mascarados):");
 
         inseridos.slice(0, 3).forEach((registro, indice) => {
             console.log(
-                `  ${indice + 1}. ${registro.nome} — token ${mascararToken(registro.token)}`
+                `  ${indice + 1}. ${registro.titulo} — token ${mascararToken(registro.token)}`
             );
         });
     } finally {

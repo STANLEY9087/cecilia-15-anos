@@ -13,6 +13,7 @@ const { Pool } = require("pg");
 const CONFIRMADO = process.argv.includes("--confirm");
 const DIRETORIO_MIGRACOES = path.join(__dirname, "..", "migrations");
 const CHAVE_LOCK = "cecilia_15_anos_migracoes";
+const PADRAO_MIGRACAO = /^\d{3}_[A-Za-z0-9_-]+\.sql$/;
 
 async function executar() {
     if (!CONFIRMADO) {
@@ -65,19 +66,31 @@ async function executar() {
             )
         `);
 
+        if (!fs.existsSync(DIRETORIO_MIGRACOES)) {
+            throw new Error(
+                `Diretório de migrações não encontrado: ${DIRETORIO_MIGRACOES}`
+            );
+        }
+
         const arquivos = fs
             .readdirSync(DIRETORIO_MIGRACOES)
-            .filter((arquivo) => arquivo.endsWith(".sql"))
-            .sort();
+            .filter((arquivo) => PADRAO_MIGRACAO.test(arquivo))
+            .sort((a, b) => a.localeCompare(b, "en"));
 
-        for (const arquivo of arquivos) {
+        if (arquivos.length === 0) {
+            console.log("Nenhuma migração encontrada.");
+            return;
+        }
+
+        for (const [indice, arquivo] of arquivos.entries()) {
+            const progresso = `[${indice + 1}/${arquivos.length}]`;
             const jaAplicada = await cliente.query(
                 "SELECT 1 FROM public.schema_migrations WHERE nome = $1",
                 [arquivo]
             );
 
             if (jaAplicada.rowCount > 0) {
-                console.log(`- ${arquivo}: já aplicada`);
+                console.log(`${progresso} ${arquivo}: já aplicada`);
                 continue;
             }
 
@@ -86,7 +99,7 @@ async function executar() {
                 "utf8"
             );
 
-            console.log(`- ${arquivo}: aplicando...`);
+            console.log(`${progresso} ${arquivo}: aplicando...`);
 
             await cliente.query("BEGIN");
 
@@ -104,7 +117,7 @@ async function executar() {
             }
         }
 
-        console.log("Migrações concluídas.");
+        console.log(`Migrações concluídas (${arquivos.length} arquivo(s)).`);
     } finally {
         if (cliente) {
             if (lockAdquirido) {

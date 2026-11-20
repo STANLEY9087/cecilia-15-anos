@@ -39,7 +39,7 @@ function criarApp({ pool, frontendUrl = "", rateLimitEnabled = true } = {}) {
     app.use(
         cors({
             origin: origensPermitidas.length ? origensPermitidas : false,
-            methods: ["GET", "POST", "OPTIONS"],
+            methods: ["GET", "POST", "PATCH", "OPTIONS"],
             allowedHeaders: ["Content-Type"],
             optionsSuccessStatus: 204
         })

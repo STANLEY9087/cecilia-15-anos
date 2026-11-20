@@ -701,7 +701,10 @@
 
         <p class="rsvp-guest-name" id="rsvpGuestName"></p>
 
-        <p class="rsvp-guest-status" id="rsvpGuestStatus"></p>
+        <span
+            class="rsvp-status-badge"
+            id="rsvpGuestStatus"
+        ></span>
 
         <p class="rsvp-question">
             Você estará conosco nessa noite especial?
@@ -727,9 +730,84 @@
 
         </div>
 
+        <!-- FAMILIARES DO CONVITE -->
+
+        <div
+            class="rsvp-family"
+            id="rsvpFamily"
+            hidden
+        >
+
+            <div class="rsvp-family-header">
+
+                <span>
+                    SUA FAMÍLIA
+                </span>
+
+                <p>
+                    Confirme quem estará com você nessa noite.
+                </p>
+
+            </div>
+
+            <ul
+                class="rsvp-family-list"
+                id="rsvpFamilyList"
+            ></ul>
+
+            <p
+                class="rsvp-family-empty"
+                id="rsvpFamilyEmpty"
+                hidden
+            >
+                Nenhum familiar neste convite por enquanto.
+            </p>
+
+            <button
+                type="button"
+                class="rsvp-add-toggle"
+                id="adicionarConvidadoBtn"
+            >
+                + Adicionar convidado
+            </button>
+
+            <form
+                class="rsvp-add-form"
+                id="rsvpAddForm"
+                hidden
+            >
+
+                <input
+                    type="text"
+                    id="novoConvidadoNome"
+                    name="nome"
+                    maxlength="150"
+                    autocomplete="off"
+                    placeholder="Nome do convidado"
+                >
+
+                <button
+                    type="submit"
+                    class="rsvp-add-save"
+                    id="salvarConvidadoBtn"
+                >
+                    Salvar
+                </button>
+
+            </form>
+
+            <p
+                class="rsvp-vagas"
+                id="rsvpVagas"
+            ></p>
+
+        </div>
+
         <div
             class="rsvp-message"
             id="rsvpMessage"
+            role="status"
+            aria-live="polite"
             hidden
         ></div>
 

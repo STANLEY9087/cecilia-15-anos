@@ -1940,23 +1940,9 @@ section {
 }
 
 
-.rsvp-guest-status {
-    margin-top: 6px;
+/* Esconde o texto enquanto está vazio (evita respiro extra). */
 
-    font-size: 10px;
-
-    letter-spacing: 3px;
-
-    text-transform: uppercase;
-
-    color: #d8b85f;
-}
-
-
-/* Esconde os textos enquanto estão vazios (evita respiro extra). */
-
-.rsvp-guest-name:empty,
-.rsvp-guest-status:empty {
+.rsvp-guest-name:empty {
     display: none;
 }
 
@@ -2012,5 +1998,392 @@ section {
     transform: none;
 
     box-shadow: none;
+}
+
+
+/* =========================================================
+   RSVP — BADGE DE STATUS DO CONVITE
+========================================================= */
+
+.rsvp-status-badge {
+    align-self: center;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-top: 4px;
+    padding: 7px 16px;
+
+    border: 1px solid rgba(216, 184, 95, 0.35);
+
+    background: rgba(216, 184, 95, 0.08);
+
+    color: #d8b85f;
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    letter-spacing: 2.5px;
+
+    text-transform: uppercase;
+}
+
+
+.rsvp-status-badge.confirmado {
+    border-color: rgba(76, 175, 125, 0.40);
+
+    background: rgba(76, 175, 125, 0.12);
+
+    color: #8fd4ae;
+}
+
+
+.rsvp-status-badge.recusado {
+    border-color: rgba(224, 85, 85, 0.40);
+
+    background: rgba(224, 85, 85, 0.10);
+
+    color: #e98a8a;
+}
+
+
+/* =========================================================
+   RSVP — FAMILIARES DO CONVITE
+========================================================= */
+
+.rsvp-family {
+    margin-top: 8px;
+    padding: 22px 20px;
+
+    border: 1px solid rgba(216, 184, 95, 0.18);
+
+    background: rgba(255, 255, 255, 0.025);
+
+    text-align: left;
+}
+
+
+.rsvp-family-header span {
+    display: block;
+
+    color: #d8b85f;
+
+    font-size: 9px;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+}
+
+
+.rsvp-family-header p {
+    margin: 8px 0 16px;
+
+    color: rgba(255, 255, 255, 0.50);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.rsvp-family-list {
+    display: flex;
+
+    flex-direction: column;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+
+.rsvp-family-item {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 12px 0;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.rsvp-family-item:last-child {
+    border-bottom: none;
+}
+
+
+.rsvp-family-name {
+    font-family: "Cormorant Garamond", serif;
+
+    font-size: 18px;
+
+    font-weight: 500;
+
+    line-height: 1.2;
+
+    color: #f5e8c9;
+
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+
+.rsvp-family-item[data-status="recusado"] .rsvp-family-name {
+    color: rgba(255, 255, 255, 0.35);
+
+    text-decoration: line-through;
+}
+
+
+.rsvp-family-actions {
+    display: flex;
+
+    flex-shrink: 0;
+
+    gap: 8px;
+}
+
+
+.rsvp-family .rsvp-member-btn {
+    margin-top: 0;
+
+    padding: 7px 12px;
+
+    border: 1px solid rgba(216, 184, 95, 0.25);
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.55);
+
+    font-size: 9px;
+
+    font-weight: 500;
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+.rsvp-form .rsvp-family .rsvp-member-btn:hover {
+    background: rgba(216, 184, 95, 0.10);
+
+    border-color: rgba(216, 184, 95, 0.45);
+
+    color: #e3c46d;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+.rsvp-family .rsvp-member-btn.confirmar.is-active {
+    border-color: #dcbf68;
+
+    background: #dcbf68;
+
+    color: #061027;
+}
+
+
+.rsvp-family .rsvp-member-btn.remover.is-active {
+    border-color: rgba(224, 85, 85, 0.50);
+
+    background: rgba(224, 85, 85, 0.16);
+
+    color: #e98a8a;
+}
+
+
+.rsvp-family .rsvp-member-btn:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+
+.rsvp-family-empty {
+    margin: 4px 0 0;
+
+    color: rgba(255, 255, 255, 0.42);
+
+    font-size: 11px;
+
+    line-height: 1.7;
+}
+
+
+.rsvp-family .rsvp-add-toggle {
+    margin-top: 16px;
+
+    padding: 8px 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #d8b85f;
+
+    font-size: 10px;
+
+    font-weight: 500;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+.rsvp-form .rsvp-family .rsvp-add-toggle:hover {
+    background: transparent;
+
+    color: #f0d98f;
+
+    box-shadow: none;
+
+    transform: none;
+
+    text-decoration: underline;
+
+    text-underline-offset: 5px;
+}
+
+
+.rsvp-add-form {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+
+.rsvp-form .rsvp-add-form input {
+    flex: 1;
+
+    width: auto;
+
+    min-width: 0;
+
+    padding: 12px 14px;
+
+    font-size: 12px;
+}
+
+
+.rsvp-form .rsvp-add-form .rsvp-add-save {
+    margin-top: 0;
+
+    padding: 12px 18px;
+
+    border: 1px solid #dcbf68;
+
+    background: #dcbf68;
+
+    color: #061027;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+.rsvp-form .rsvp-add-form .rsvp-add-save:hover {
+    background: transparent;
+
+    color: #e3c46d;
+
+    box-shadow: none;
+
+    transform: none;
+}
+
+
+.rsvp-vagas {
+    margin: 14px 0 0;
+
+    color: rgba(255, 255, 255, 0.38);
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    line-height: 1.6;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   RSVP — MENSAGEM INFORMATIVA
+========================================================= */
+
+.rsvp-message.info {
+    border: 1px solid rgba(216, 184, 95, 0.35);
+
+    background: rgba(216, 184, 95, 0.08);
+
+    color: #e3c46d;
+}
+
+
+/* Garante que seções controladas pelo JS respeitem o atributo hidden. */
+
+[hidden] {
+    display: none !important;
+}
+
+
+@media (max-width: 480px) {
+
+    .rsvp-family {
+        padding: 18px 14px;
+    }
+
+    .rsvp-family-item {
+        align-items: flex-start;
+    }
+
+    .rsvp-family-actions {
+        gap: 6px;
+    }
+
+    .rsvp-family .rsvp-member-btn {
+        padding: 7px 9px;
+
+        font-size: 8px;
+
+        letter-spacing: 1px;
+    }
+
+    .rsvp-add-form {
+        flex-direction: column;
+    }
+
+    .rsvp-form .rsvp-add-form .rsvp-add-save {
+        width: 100%;
+    }
+
 }
 
